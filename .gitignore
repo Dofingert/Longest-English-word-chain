@@ -9,3 +9,4 @@
 cmake-build-debug/
 [Dd]ebug/
 [Dd]ebufPublic/
+.idea/
