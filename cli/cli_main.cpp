@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
         if (file_size > MAX_FILE_SIZE) {
             throw cli_exception_s(cli_exception_s::err_file_size);
         }
-        input_buffer = new char[file_size + 1];
+        input_buffer = (char *) (malloc(file_size + 1));
         fseek(file, 0, SEEK_SET);
         fread(input_buffer, 1, file_size, file);
         fclose(file);
@@ -143,32 +143,29 @@ int main(int argc, char *argv[]) {
         // 进行分词 获得单词指针数组
         word_num = split_word(input_buffer, word_list);
         c_word_list = word_list.data();
-        char** result = new char*[32768];
-        result[0] = new char[65535];
-        if(cli_type == CLI_COUNT_ALL) {
-//            char *result;
-//            ret = gen_chains_all(c_word_list,word_num,&result,malloc);
-            ret = gen_chains_all(c_word_list,word_num,result);
-            printf("%d\n",ret);
-        } else if(cli_type == CLI_MAX_CHAR) {
-            ret = gen_chain_char(c_word_list,word_num,result,head,tail,ban,ring);
-        } else if(cli_type == CLI_MAX_WORD) {
-            ret = gen_chain_word(c_word_list,word_num,result,head,tail,ban,ring);
+        char **result = (char **) malloc(sizeof(char *) * 65536);
+        if (cli_type == CLI_COUNT_ALL) {
+            ret = gen_chains_all(c_word_list, word_num, result, malloc);
+            printf("%d\n", ret);
+        } else if (cli_type == CLI_MAX_CHAR) {
+            ret = gen_chain_char(c_word_list, word_num, result, head, tail, ban, ring, malloc);
+        } else if (cli_type == CLI_MAX_WORD) {
+            ret = gen_chain_word(c_word_list, word_num, result, head, tail, ban, ring, malloc);
         }
-        if(cli_type != CLI_COUNT_ALL)
-        {
+        if (cli_type != CLI_COUNT_ALL) {
             file = fopen("solution.txt", "w");
         } else {
             file = stdout;
         }
         for (int i = 0; i < ret; i++) {
-            fprintf(file,"%s\n",result[i]);
+            fprintf(file, "%s\n", result[i]);
         }
-        if(cli_type != CLI_COUNT_ALL)
-        {
+        free(result[0]);
+        free(result);
+        if (cli_type != CLI_COUNT_ALL) {
             fclose(file);
         }
-        delete []input_buffer;
+        free(input_buffer);
         return 0;
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
