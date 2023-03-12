@@ -183,6 +183,21 @@ TEST(gen_chain_char, loop_0) {
 #include "gen_chain_char_default.txt"
 }
 
+TEST(gen_chain_char, loop_1) {
+#include"test_point/loop_1.txt"
+#include "gen_chain_char_default.txt"
+}
+
+TEST(gen_chain_word, loop_1) {
+#include"test_point/loop_1.txt"
+#include "gen_chain_word_default.txt"
+}
+
+TEST(gen_chains_all, loop_1) {
+#include"test_point/loop_1.txt"
+#include "gen_chains_default.txt"
+}
+
 int dp(const char* words[], int len, char head, char tail, bool weighted);
 const char** generator(int n, bool DAG, int len, unsigned int Seed);
 
