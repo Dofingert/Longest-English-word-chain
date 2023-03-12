@@ -1,0 +1,2 @@
+std_check_gen_max(words_str, sizeof(words_str) / sizeof(words_str[0]),
+                      gen_chain_word, head, tail, ring, std_word_ans);

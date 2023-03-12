@@ -1,0 +1,7 @@
+std::string words_str[] = {"ab", "bc", "ad", "de"};
+int std_cnt_ans = 2;
+int std_word_ans = 2;
+int std_char_ans = 2;
+char head = '\0';
+char tail = '\0';
+bool ring = false;
