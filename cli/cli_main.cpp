@@ -151,9 +151,9 @@ int main(int argc, char *argv[]) {
             ret = gen_chains_all(c_word_list,word_num,result);
             printf("%d\n",ret);
         } else if(cli_type == CLI_MAX_CHAR) {
-            ret = gen_chain_char(c_word_list,word_num,result,head,tail,ring);
+            ret = gen_chain_char(c_word_list,word_num,result,head,tail,ban,ring);
         } else if(cli_type == CLI_MAX_WORD) {
-            ret = gen_chain_word(c_word_list,word_num,result,head,tail,ring);
+            ret = gen_chain_word(c_word_list,word_num,result,head,tail,ban,ring);
         }
         if(cli_type != CLI_COUNT_ALL)
         {

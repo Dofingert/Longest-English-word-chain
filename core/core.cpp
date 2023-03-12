@@ -2,7 +2,7 @@
 // Created by Surface on 2023/3/8.
 //
 #include <bits/stdc++.h>
-#include "core.h"
+#include "../include/core.h"
 #include <vector>
 #include <string>
 #include <sstream>
@@ -164,7 +164,7 @@ int get_all(char* result[]) {
 
 
 int get_longest_chain_on_DAG(char* result[], char head, char tail, bool weighted) {
-    // f 记录 dp 值，topo 记录拓扑序，from 记录 f 是从之后哪个单词转移来的，self_from 记录 f 是否是从自环转移来的
+    // status 记录 dp 值，topo 记录拓扑序，from 记录 status 是从之后哪个单词转移来的，self_from 记录 status 是否是从自环转移来的
     int topo[MAX_N + 5] = {}, f[MAX_N + 5] = {}, from[MAX_N + 5] = {}, self_from[MAX_N + 5] = {};
     for(int i = 0; i < MAX_N; i++) {
         if (DEBUG) printf("col[%c] = %d\n", 'a' + i, col[i]);
@@ -190,7 +190,7 @@ int get_longest_chain_on_DAG(char* result[], char head, char tail, bool weighted
         }
     }
     for (int i = 0; i < MAX_N; i++) {
-        if (DEBUG)printf("f[%d] = %d\n", i, f[i]);
+        if (DEBUG)printf("status[%d] = %d\n", i, f[i]);
     }
     // 枚举每一条边作为起始边的情况
     int pos = -1, max_sum = -INF;
@@ -198,7 +198,7 @@ int get_longest_chain_on_DAG(char* result[], char head, char tail, bool weighted
         if(!head || head == word_list[i][0]){
             int u = word_list[i][0] - 'a', v = word_list[i].back() - 'a';
             if(u == v){
-                // 对于自环，需要判断 f[u] 是否只有自环，因为单词链长度大于1，单独一个自环无法构成单词链
+                // 对于自环，需要判断 status[u] 是否只有自环，因为单词链长度大于1，单独一个自环无法构成单词链
                 if(f[u] == (weighted ? (int)word_list[i].length() : 1)) continue;
                 if(max_sum < f[u]) max_sum = f[u], pos = i;
             }else{

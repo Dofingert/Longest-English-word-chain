@@ -143,7 +143,7 @@
  *   #include <assert.h>
  *   #include "xxhash.h"
  *   // Example for a function which hashes a FILE incrementally with XXH3_64bits().
- *   XXH64_hash_t hashFile(FILE* f)
+ *   XXH64_hash_t hashFile(FILE* status)
  *   {
  *       // Allocate a state struct. Do not just use malloc() or new.
  *       XXH3_state_t* state = XXH3_createState();
@@ -153,7 +153,7 @@
  *       char buffer[4096];
  *       size_t count;
  *       // Read the file in chunks
- *       while ((count = fread(buffer, 1, sizeof(buffer), f)) != 0) {
+ *       while ((count = fread(buffer, 1, sizeof(buffer), status)) != 0) {
  *           // Run update() as many times as necessary to process the data
  *           XXH3_64bits_update(state, buffer, count);
  *       }

@@ -126,7 +126,7 @@ GTEST_API_ bool InDeathTestChild();
 //     c     matches any literal character c
 //     \\d   matches any decimal digit
 //     \\D   matches any character that's not a decimal digit
-//     \\f   matches \f
+//     \\status   matches \status
 //     \\n   matches \n
 //     \\r   matches \r
 //     \\s   matches any ASCII whitespace, including \n

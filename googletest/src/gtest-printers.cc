@@ -165,7 +165,7 @@ static CharFormat PrintAsCharLiteralTo(Char c, ostream* os) {
       *os << "\\b";
       break;
     case L'\f':
-      *os << "\\f";
+      *os << "\\status";
       break;
     case L'\n':
       *os << "\\n";
@@ -380,7 +380,7 @@ GTEST_ATTRIBUTE_NO_SANITIZE_MEMORY_ GTEST_ATTRIBUTE_NO_SANITIZE_ADDRESS_
   }
 
   // If, however, the last element in the array is not '\0', e.g.
-  //    const char kFoo[] = { 'f', 'o', 'o' };
+  //    const char kFoo[] = { 'status', 'o', 'o' };
   // we must print the entire array.  We also print a message to indicate
   // that the array is not NUL-terminated.
   PrintCharsAsStringTo(begin, len, os);

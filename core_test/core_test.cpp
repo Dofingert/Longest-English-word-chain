@@ -4,19 +4,12 @@
 #include "gtest/gtest.h"
 #include <iostream>
 #include <set>
+#include <core.h>
 
 #define XXH_INLINE_ALL
 
 #include "xxhash.h"
 
-extern "C" {
-__declspec(dllimport) int gen_chains_all(char *words[], int len, char *result[]) noexcept(false);
-__declspec(dllimport) int
-gen_chain_word(char *words[], int len, char *result[], char head, char tail, bool allow_circ) noexcept(false);
-__declspec(dllimport) int gen_chain_word_unique(char *words[], int len, char *result[]) noexcept(false);
-__declspec(dllimport) int
-gen_chain_char(char *words[], int len, char *result[], char head, char tail, bool enable_loop) noexcept(false);
-}
 typedef std::set<XXH64_hash_t> word_set_t;
 
 int check_validation(const word_set_t &dictionary, word_set_t &appeared, const char *word_list) {
@@ -119,15 +112,16 @@ void std_check_gen_chains_all(std::string words_str[], int word_cnt, int cnt) {
     delete[]result;
 }
 
-void std_check_gen_max(std::string words_str[], int word_cnt, int (*fut)(char *[], int, char *[], char, char, bool),
-                       char head, char tail, bool ring, int max) {
+void
+std_check_gen_max(std::string words_str[], int word_cnt, int (*fut)(char *[], int, char *[], char, char, char, bool),
+                  char head, char tail, char jail, bool ring, int max) {
     const char *words[word_cnt];
     char **result = new char *[65536];
     result[0] = new char[128 * 1024 * 1024];
     for (int i = 0; i < word_cnt; i++) {
         words[i] = words_str[i].c_str();
     }
-    int ret = fut(const_cast<char **>(words), word_cnt, result, head, tail, ring);
+    int ret = fut(const_cast<char **>(words), word_cnt, result, head, tail, jail, ring);
     EXPECT_EQ(ret, max);
     word_set_t appeared;
     word_set_t dictionary = build_dictionary(word_cnt, const_cast<char **>(words));
@@ -187,6 +181,37 @@ TEST(gen_chain_char, no_loop_1) {
 TEST(gen_chain_char, loop_0) {
 #include"test_point/loop_0.txt"
 #include "gen_chain_char_default.txt"
+}
+
+int dp(const char* words[], int len, char head, char tail, bool weighted);
+const char** generator(int n, bool DAG, int len, unsigned int Seed);
+
+TEST(gen_chain_word, random_no_loop) {
+    for (int i = 1; i < 20; i += 3) {
+        for (int n = 2; n <= 26; n += 2) {
+            const char **input = generator(n, true, i, n * i);
+            int std_ans = dp(input,i,0,0, false);
+            std::string input_str[i];
+            for(int id = 0 ; id < i; id++){
+                input_str[id] = std::string(input[id]);
+            }
+            std_check_gen_max(input_str,i,gen_chain_word,0,0,0,0,std_ans);
+        }
+    }
+}
+
+TEST(gen_chain_word, random_loop) {
+    for (int i = 1; i < 20; i += 3) {
+        for (int n = 2; n <= 26; n += 2) {
+            const char **input = generator(n, false, i, n * i);
+            int std_ans = dp(input,i,0,0, false);
+            std::string input_str[i];
+            for(int id = 0 ; id < i; id++){
+                input_str[id] = std::string(input[id]);
+            }
+            std_check_gen_max(input_str,i,gen_chain_word,0,0,0, true,std_ans);
+        }
+    }
 }
 
 int main() {

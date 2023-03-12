@@ -4529,7 +4529,7 @@ std::string JsonUnitTestResultPrinter::EscapeJson(const std::string& str) {
         m << "\\n";
         break;
       case '\f':
-        m << "\\f";
+        m << "\\status";
         break;
       case '\r':
         m << "\\r";
@@ -6339,7 +6339,7 @@ static const char* ParseFlagValue(const char* str, const char* flag_name,
 // "--flag=value" or "--flag".
 //
 // In the former case, the value is taken as true as long as it does
-// not start with '0', 'f', or 'F'.
+// not start with '0', 'status', or 'F'.
 //
 // In the latter case, the value is taken as true.
 //
