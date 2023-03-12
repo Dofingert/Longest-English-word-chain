@@ -3,5 +3,6 @@ project(core)
 
 set(CMAKE_CXX_STANDARD 14)
 
-#add_executable(core main.cpp core.cpp main.h core.h)
-#add_executable(core core.cpp core.h)
+add_library(core SHARED core.cpp ../include/core.h)
+
+target_compile_definitions(core PRIVATE EXPORT_FPIC)
