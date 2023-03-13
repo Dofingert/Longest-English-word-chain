@@ -34,16 +34,21 @@ int scc_col[MAX_N + 5], scc_tot = 0;
 vector<int> dfs_stack;
 
 void word_preprocessing(char *words[], int len, char jail) {
+    std::set<std::string> dictionary;
     word_list.clear();
     for (int i = 0; i < len; i++) {
         string word = words[i];
+        transform(word.begin(), word.end(), word.begin(), ::tolower);
         if (word[0] == jail) {
             continue;
         }
         if (DEBUG) {
             printf("%s\n", words[i]);
         }
-        word_list.push_back(word);
+        if (dictionary.find(word) == dictionary.end()) {
+            word_list.push_back(word);
+            dictionary.insert(word);
+        }
     }
     sort(word_list.begin(), word_list.end());
 }
@@ -124,6 +129,9 @@ void dfs_all_word_chain(int i, bool loop) {
 }
 
 void write_ans_to_mem(char *result[], void *out_malloc(size_t)) {
+    if (ans.size() > 20000) {
+        throw logic_error("answer is too long!");
+    }
     // 计算并分配 ans 的 size
     int ans_size = 0;
     for (auto &i: ans) {
@@ -366,7 +374,8 @@ int gen_chains_all(char *words[], int len, char *result[], void *out_malloc(size
     return get_all_chains(result, out_malloc);
 }
 
-int gen_chain_word(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop, void *out_malloc(size_t)) {
+int gen_chain_word(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop,
+                   void *out_malloc(size_t)) {
     word_preprocessing(words, len, jail);
     get_SCC();
     if (!enable_loop) {
@@ -377,7 +386,8 @@ int gen_chain_word(char *words[], int len, char *result[], char head, char tail,
     }
 }
 
-int gen_chain_char(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop, void *out_malloc(size_t)) {
+int gen_chain_char(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop,
+                   void *out_malloc(size_t)) {
     word_preprocessing(words, len, jail);
     get_SCC();
     if (!enable_loop) {
