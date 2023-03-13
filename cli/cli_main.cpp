@@ -3,18 +3,26 @@
 #include <vector>
 
 #include "cli_main.h"
+#include <set>
+
+#define XXH_INLINE_ALL
+
+#include <xxhash.h>
+typedef std::set<XXH64_hash_t> word_set_t;
 
 // 分割输入字符串的函数
 // 传入两个参数 char* input_string 和 std::vector<char*> result
 // 前者存放输入的字符串, 后者存放输出的单词数组
 // 返回值为单词的数量
 size_t split_word(char *input_string, std::vector<char *> &result) {
+    word_set_t diction;
     int begin_pos = 0;
     enum {
         WAIT_WORD,
         IN_WORD
     } state = WAIT_WORD;
-    for (int pos = 0; input_string[pos]; pos++) {
+    int pos = 0;
+    for (; input_string[pos]; pos++) {
         if (state == WAIT_WORD && isalpha(input_string[pos])) {
             state = IN_WORD;
             begin_pos = pos;
@@ -22,11 +30,16 @@ size_t split_word(char *input_string, std::vector<char *> &result) {
         } else if (state == IN_WORD && !isalpha(input_string[pos])) {
             state = WAIT_WORD;
             input_string[pos] = '\0';
-            result.push_back(input_string + begin_pos);
+            if (diction.find(XXH64(input_string + begin_pos, pos - begin_pos, 0)) == diction.end()) {
+                diction.insert(XXH64(input_string + begin_pos, pos - begin_pos, 0));
+                result.push_back(input_string + begin_pos);
+            }
         }
     }
     if (state == IN_WORD) {
-        result.push_back(input_string + begin_pos);
+        if (diction.find(XXH64(input_string + begin_pos, pos - begin_pos, 0)) == diction.end()) {
+            result.push_back(input_string + begin_pos);
+        }
     }
     return result.size();
 }

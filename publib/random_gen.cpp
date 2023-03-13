@@ -71,7 +71,7 @@ char **generator(int n, bool DAG, int word_cnt, unsigned int Seed) {
         alloca_space += len + 1;
         if (words[i] != nullptr) {
             words[i][0] = rnd() % n + 'a';
-            words[i][1] = (char) (i + 'a');
+            words[i][1] = (char) (i % n + 'a');
             for (int j = 2; j < len; j++) words[i][j] = (char) (rnd() % n + 'a');
             if (DAG && words[i][0] >= words[i][len - 1]) {
                 if (words[i][0] == words[i][len - 1]) {
