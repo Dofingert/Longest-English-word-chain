@@ -9,7 +9,7 @@ static int seed;
 
 int status[1 << 20][20];
 
-int dp(const char *words[], int len, char head, char tail, bool weighted) {
+int dp(char *words[], int len, char head, char tail, bool weighted) {
     int words_len[20];
     for (int i = 0; i < len; i++) {
         words_len[i] = (int) strlen(words[i]);
@@ -59,12 +59,16 @@ unsigned int rnd() {
     return seed;
 }
 
-const char **generator(int n, bool DAG, int len, unsigned int Seed) {
-    seed = Seed ^ n ^ len;
-    char **words = (char **) malloc(len * sizeof(char *));
-    for (int i = 0; i < len; i++) {
+char **generator(int n, bool DAG, int word_cnt, unsigned int Seed) {
+    seed = Seed ^ n ^ word_cnt;
+    char **words = (char **) malloc(word_cnt * sizeof(char *));
+    words[0] = (char *) malloc(word_cnt * 13);
+    char *alloca_space = words[0];
+    for (int i = 0; i < word_cnt; i++) {
         int len = rnd() % 10 + 3;
-        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
+//        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
+        words[i] = alloca_space;
+        alloca_space += len + 1;
         if (words[i] != nullptr) {
             words[i][0] = rnd() % n + 'a';
             words[i][1] = (char) (i + 'a');
@@ -78,5 +82,5 @@ const char **generator(int n, bool DAG, int len, unsigned int Seed) {
             words[i][len] = 0;
         }
     }
-    return (const char **) words;
+    return words;
 }

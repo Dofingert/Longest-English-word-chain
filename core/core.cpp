@@ -103,14 +103,11 @@ void check_loop() {
 void dfs_all_word_chain(int i, bool loop) {
     if (dfs_stack.size() > 1) {
         if (ans.size() < MAX_ANS_CNT) {
-            string S;
+            stringstream S;
             for (int j: dfs_stack) {
-                if (!S.empty()) {
-                    S += " ";
-                }
-                S += word_list[j];
+                S << word_list[j] << ' ';
             }
-            ans.push_back(S);
+            ans.push_back(S.str());
         } else {
             throw logic_error("Too many word chains!");
         }
