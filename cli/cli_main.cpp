@@ -173,7 +173,9 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < ret; i++) {
             fprintf(file, "%s\n", result[i]);
         }
-        free(result[0]);
+        if(ret != 0) {
+            free(result[0]);
+        }
         free(result);
         if (cli_type != CLI_COUNT_ALL) {
             fclose(file);
