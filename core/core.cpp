@@ -365,6 +365,7 @@ int get_longest_chain(char *result[], char head, char tail, bool weighted, void 
 
 
 int gen_chains_all(char *words[], int len, char *result[], void *out_malloc(size_t)) {
+    ans.clear();
     word_preprocessing(words, len, 0);
     get_SCC();
     check_loop();
@@ -373,6 +374,7 @@ int gen_chains_all(char *words[], int len, char *result[], void *out_malloc(size
 
 int gen_chain_word(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop,
                    void *out_malloc(size_t)) {
+    ans.clear();
     word_preprocessing(words, len, jail);
     get_SCC();
     if (!enable_loop) {
@@ -385,6 +387,7 @@ int gen_chain_word(char *words[], int len, char *result[], char head, char tail,
 
 int gen_chain_char(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop,
                    void *out_malloc(size_t)) {
+    ans.clear();
     word_preprocessing(words, len, jail);
     get_SCC();
     if (!enable_loop) {

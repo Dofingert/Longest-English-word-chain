@@ -1,5 +1,5 @@
 std::string words_str[] = {"ab", "bc", "cd", "de", "ea"};
-int std_cnt_ans = 6;
+int std_cnt_ans = -1;
 int std_word_ans = 5;
 int std_char_ans = 5;
 char head = '\0';

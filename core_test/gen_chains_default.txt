@@ -1,4 +1,4 @@
-if(ring)
+if(std_cnt_ans == -1)
     EXPECT_ANY_THROW(std_check_gen_chains_all(words_str, sizeof(words_str) / sizeof(words_str[0]), std_cnt_ans));
 else
     std_check_gen_chains_all(words_str, sizeof(words_str) / sizeof(words_str[0]), std_cnt_ans);
