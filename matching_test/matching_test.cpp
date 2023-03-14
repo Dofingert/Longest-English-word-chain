@@ -7,9 +7,17 @@ typedef int (*max_cnt_f)(char *[], int, char *[], void *(*)(size_t));
 
 typedef int (*max_fut_f)(char *[], int, char *[], char, char, char, bool, void *(*)(size_t));
 
-const int word_cnt = 6000; // 单词个数
+const int word_cnt = 50; // 单词个数
 const int loop_cnt = 100; // 测试点个数
-const int circle_allow = 0; // 是否允许测试点有环，1允许，0不允许
+const int circle_allow = 1; // 是否允许测试点有环，1允许，0不允许
+
+void print_all_time(double result[], int cnt) {
+    for (int i = 0; i < cnt; i++) {
+        std::cout << i << " exec time: ";
+        std::cout << result[i] * 1000 << " ms" << std::endl;
+    }
+}
+
 void print_all(int result[], int cnt) {
     for (int i = 0; i < cnt; i++) {
         std::cout << "prog " << i << ": ";
@@ -50,6 +58,8 @@ int main(int argc, char *argv[]) {
     max_fut_f max_char_func[argc - 1];
     max_cnt_f cnt_func[argc - 1];
     HINSTANCE hInstLib[argc - 1];
+    LARGE_INTEGER cnt_freq;
+    QueryPerformanceFrequency(&cnt_freq);
 
     for (int prog = 1; prog < argc; prog++) {
         hInstLib[prog - 1] = LoadLibrary((LPCTSTR) argv[prog]);
@@ -76,19 +86,24 @@ int main(int argc, char *argv[]) {
         for (int ring = 0; ring <= circle_allow; ring++) {
             // 0 无环，1 有环
             int cnt_result_table[argc - 1];
+            double cnt_time[argc - 1];
             int word_result_table[argc - 1];
+            double word_time[argc - 1];
             int char_result_table[argc - 1];
+            double char_time[argc - 1];
             std::set<int> cnt_result_set;
             std::set<int> word_result_set;
             std::set<int> char_result_set;
-#pragma omp parallel for
             for (int i = 0; i < argc - 1; i++) {
+                LARGE_INTEGER time_1, time_2;
                 char **input = generator(26, ring == 0, word_cnt, loop_id + ring * 65536);
                 word_set_t dictionary = build_dictionary(word_cnt, input);
                 char **result = (char **) malloc(32768LL * sizeof(char *));
                 int link_cnt = -1;
                 try {
+                    QueryPerformanceCounter(&time_1);
                     link_cnt = cnt_func[i](input, word_cnt, result, malloc);
+                    QueryPerformanceCounter(&time_2);
                     word_set_t appear;
                     int err = 0;
                     for (int line = 0; line < link_cnt; line++) {
@@ -105,12 +120,16 @@ int main(int argc, char *argv[]) {
                         cnt_result_set.insert(link_cnt);
                     }
                 } catch (std::exception &e) {
+                    QueryPerformanceCounter(&time_2);
                     cnt_result_table[i] = -1;
                     cnt_result_set.insert(-1);
                 }
+                cnt_time[i] = (double) (time_2.QuadPart - time_1.QuadPart) / (double) cnt_freq.QuadPart;
 
                 try {
+                    QueryPerformanceCounter(&time_1);
                     link_cnt = max_word_func[i](input, word_cnt, result, '\0', '\0', '\0', ring, malloc);
+                    QueryPerformanceCounter(&time_2);
                     word_set_t appear;
                     int err = 0;
                     std::stringstream result_str;
@@ -132,12 +151,16 @@ int main(int argc, char *argv[]) {
                         word_result_set.insert(link_cnt);
                     }
                 } catch (std::exception &e) {
+                    QueryPerformanceCounter(&time_2);
                     word_result_table[i] = -1;
                     word_result_set.insert(-1);
                 }
+                word_time[i] = (double) (time_2.QuadPart - time_1.QuadPart) / (double) cnt_freq.QuadPart;
 
                 try {
+                    QueryPerformanceCounter(&time_1);
                     link_cnt = max_char_func[i](input, word_cnt, result, '\0', '\0', '\0', ring, malloc);
+                    QueryPerformanceCounter(&time_2);
                     word_set_t appear;
                     int err = 0;
                     std::stringstream result_str;
@@ -159,9 +182,12 @@ int main(int argc, char *argv[]) {
                         char_result_set.insert(link_cnt);
                     }
                 } catch (std::exception &e) {
+                    QueryPerformanceCounter(&time_2);
                     char_result_table[i] = -1;
                     char_result_set.insert(-1);
                 }
+                char_time[i] = (double) (time_2.QuadPart - time_1.QuadPart) / (double) cnt_freq.QuadPart;
+
                 free(result);
                 free(input[0]);
                 free(input);
@@ -169,6 +195,7 @@ int main(int argc, char *argv[]) {
             if (cnt_result_set.size() == 1 && cnt_result_set.find(-2) == cnt_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
                           << "cnt_result_set match in all point!" << std::endl;
+                print_all_time(cnt_time, argc - 1);
             } else {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
                           << "cnt_result_set mismatch!" << std::endl;
@@ -186,6 +213,7 @@ int main(int argc, char *argv[]) {
             if (word_result_set.size() == 1 && word_result_set.find(-2) == word_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
                           << "word_result_set match in all point!" << std::endl;
+                print_all_time(word_time, argc - 1);
             } else {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
                           << "word_result_set mismatch!" << std::endl;
@@ -203,6 +231,7 @@ int main(int argc, char *argv[]) {
             if (char_result_set.size() == 1 && char_result_set.find(-2) == char_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
                           << "char_result_set match in all point!" << std::endl;
+                print_all_time(char_time, argc - 1);
             } else {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
                           << "char_result_set mismatch!" << std::endl;
