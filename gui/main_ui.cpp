@@ -68,7 +68,7 @@ pending_job_t::pending_job_t(int in_mode, char in_head, char in_tail, char in_ja
 }
 
 void pending_job_t::compute_load() {
-    QThread::sleep(1); // 测试延迟
+//    QThread::sleep(1); // 测试延迟
     std::vector<char *> word_list;
     char *input_buffer = new char[input_string.size() + 1];
     strcpy(input_buffer, input_string.c_str());
