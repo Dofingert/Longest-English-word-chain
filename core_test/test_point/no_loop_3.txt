@@ -1,0 +1,7 @@
+std::string words_str[] = {"aa", "aaa"};
+int std_cnt_ans = -1; // > 20000
+int std_word_ans = -1;
+int std_char_ans = -1;
+char head = '\0';
+char tail = '\0';
+bool ring = false;

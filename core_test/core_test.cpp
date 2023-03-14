@@ -124,6 +124,11 @@ TEST(gen_chain_char, no_loop_2) {
 #include "gen_chain_char_default.txt"
 }
 
+TEST(gen_chain_char, no_loop_3) {
+#include"test_point/no_loop_3.txt"
+#include "gen_chain_char_default.txt"
+}
+
 TEST(gen_chain_word, random_no_loop) {
     for (int i = 1; i < 20; i += 3) {
         for (int n = 2; n <= 26; n += 2) {
