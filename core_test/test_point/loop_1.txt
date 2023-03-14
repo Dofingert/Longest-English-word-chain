@@ -4,4 +4,5 @@ int std_word_ans = 5;
 int std_char_ans = 5;
 char head = '\0';
 char tail = '\0';
+char jail = '\0';
 bool ring = true;

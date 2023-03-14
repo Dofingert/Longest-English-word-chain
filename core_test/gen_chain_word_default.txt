@@ -1,6 +1,6 @@
 if(std_word_ans == -1)
     EXPECT_ANY_THROW(std_check_gen_max(words_str, sizeof(words_str) / sizeof(words_str[0]),
-                      gen_chain_word, head, tail, 0, ring, std_word_ans));
+                      gen_chain_word, head, tail, jail, ring, std_word_ans));
 else
     std_check_gen_max(words_str, sizeof(words_str) / sizeof(words_str[0]),
-                      gen_chain_word, head, tail, 0, ring, std_word_ans);
+                      gen_chain_word, head, tail, jail, ring, std_word_ans);

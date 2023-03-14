@@ -4,6 +4,7 @@ int std_word_ans = 9;
 int std_char_ans = 9;
 char head = '\0';
 char tail = '\0';
+char jail = '\0';
 bool ring = false;
 // 20000 = 2 * 2 * 2 * 2 * 2 * 5 * 5 * 5 * 5
 // 3 + 3 + 3 + 3 + 3 + 6 + 6 + 6 + 6 = 15 + 24 = 39
