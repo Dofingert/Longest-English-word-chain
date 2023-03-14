@@ -7,6 +7,9 @@ typedef int (*max_cnt_f)(char *[], int, char *[], void *(*)(size_t));
 
 typedef int (*max_fut_f)(char *[], int, char *[], char, char, char, bool, void *(*)(size_t));
 
+const int word_cnt = 6000; // 单词个数
+const int loop_cnt = 100; // 测试点个数
+const int circle_allow = 0; // 是否允许测试点有环，1允许，0不允许
 void print_all(int result[], int cnt) {
     for (int i = 0; i < cnt; i++) {
         std::cout << "prog " << i << ": ";
@@ -42,7 +45,7 @@ int main(int argc, char *argv[]) {
         std::cout << "Usage: maching_test dll_under_test{2,} ..." << std::endl;
         return -1;
     }
-    int loop_cnt = 100;
+
     max_fut_f max_word_func[argc - 1];
     max_fut_f max_char_func[argc - 1];
     max_cnt_f cnt_func[argc - 1];
@@ -70,8 +73,8 @@ int main(int argc, char *argv[]) {
     // Main loop, Generate data in every loop.;
     for (int loop_id = 0; loop_id < loop_cnt; loop_id++) {
         // NO RING TEST
-        for (int ring = 0; ring < 2; ring++) {
-            int word_cnt = 60;
+        for (int ring = 0; ring <= circle_allow; ring++) {
+            // 0 无环，1 有环
             int cnt_result_table[argc - 1];
             int word_result_table[argc - 1];
             int char_result_table[argc - 1];

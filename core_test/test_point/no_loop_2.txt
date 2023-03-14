@@ -1,7 +1,7 @@
 std::string words_str[] = {"ab", "abb", "bc", "bcc", "cd", "cdd", "de", "dee", "ef", "eff", "fg", "fgg", "fggg", "fgggg", "fgggg", "gh", "ghh", "ghhh", "ghhhh", "ghhhhh", "hi", "hii", "hiiii", "hiiiii", "ij", "ijj", "ijjj", "ijjjj", "ijjjjj"};
 int std_cnt_ans = -1; // > 20000
 int std_word_ans = 9;
-int std_char_ans = 39;
+int std_char_ans = 9;
 char head = '\0';
 char tail = '\0';
 bool ring = false;
