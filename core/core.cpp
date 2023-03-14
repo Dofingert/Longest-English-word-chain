@@ -129,9 +129,6 @@ void dfs_all_word_chain(int i, bool loop) {
 }
 
 void write_ans_to_mem(char *result[], void *out_malloc(size_t)) {
-    if (ans.size() > 20000) {
-        throw logic_error("answer is too long!");
-    }
     // 计算并分配 ans 的 size
     int ans_size = 0;
     for (auto &i: ans) {
