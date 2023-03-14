@@ -11,7 +11,6 @@
 #include <cassert>
 #include <map>
 
-#define DEBUG 0
 using namespace std;
 typedef __int128 LLL;
 
@@ -41,9 +40,6 @@ void word_preprocessing(char *words[], int len, char jail) {
         transform(word.begin(), word.end(), word.begin(), ::tolower);
         if (word[0] == jail) {
             continue;
-        }
-        if (DEBUG) {
-            printf("%s\n", words[i]);
         }
         if (dictionary.find(word) == dictionary.end()) {
             word_list.push_back(word);
@@ -167,7 +163,6 @@ int get_longest_chain_on_DAG(char *result[], char head, char tail, bool weighted
     // status 记录 dp 值，topo 记录拓扑序，from 记录 status 是从之后哪个单词转移来的，self_from 记录 status 是否是从自环转移来的
     int topo[MAX_N + 5] = {}, f[MAX_N + 5] = {}, from[MAX_N + 5] = {}, self_from[MAX_N + 5] = {};
     for (int i = 0; i < MAX_N; i++) {
-        if (DEBUG) printf("col[%c] = %d\n", 'a' + i, scc_col[i]);
         topo[scc_col[i] - 1] = i; // topological 序
     }
     for (int i = 0; i < MAX_N; i++) {
@@ -188,9 +183,6 @@ int get_longest_chain_on_DAG(char *result[], char head, char tail, bool weighted
                 break;
             }
         }
-    }
-    for (int i = 0; i < MAX_N; i++) {
-        if (DEBUG)printf("status[%d] = %d\n", i, f[i]);
     }
     // 枚举每一条边作为起始边的情况
     int pos = -1, max_sum = -INF;
