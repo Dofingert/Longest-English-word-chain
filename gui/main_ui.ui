@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>main_ui</class>
+ <widget class="QWidget" name="main_ui">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>865</width>
+    <height>597</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>main_ui</string>
+  </property>
+  <widget class="QPlainTextEdit" name="text_input">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>180</y>
+     <width>261</width>
+     <height>401</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QTextBrowser" name="text_output">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>60</y>
+     <width>561</width>
+     <height>521</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="bottom_compute">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>130</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Compute</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="option_ring">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>130</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>允许环</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="box_mode">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>261</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>遍历所有单词链</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>最多单词</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>最多字母</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QPlainTextEdit" name="box_head">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>80</y>
+     <width>81</width>
+     <height>41</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPlainTextEdit" name="box_tail">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>80</y>
+     <width>81</width>
+     <height>41</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPlainTextEdit" name="box_jail">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>80</y>
+     <width>81</width>
+     <height>41</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Head</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>50</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Tail</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>50</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Jail</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="status_label">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>10</y>
+     <width>561</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>ooo</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
