@@ -8,6 +8,7 @@
 #define XXH_INLINE_ALL
 
 #include <xxhash.h>
+
 typedef std::set<XXH64_hash_t> word_set_t;
 
 // 分割输入字符串的函数
@@ -120,6 +121,18 @@ int main(int argc, char *argv[]) {
                     ban = argv[i][0] | ('a' ^ 'A');
                 }
             } else {
+                // 检查输入文件名
+                char file_name_end[5];
+                if (strlen(argv[i]) >= 4) {
+                    memcpy(file_name_end, &argv[i][strlen(argv[i]) - 4], 4);
+                }
+                file_name_end[4] = '\0';
+                for (int c = 1; c < 4; c++) {
+                    file_name_end[c] = tolower(file_name_end[c]);
+                }
+                if (strcmp(file_name_end, ".txt") != 0) {
+                    throw std::logic_error("Input file is Not a .txt file!");
+                }
                 // 打开输入文件
                 if (file) {
                     throw cli_exception_s(cli_exception_s::err_repeated_args);
@@ -138,7 +151,7 @@ int main(int argc, char *argv[]) {
             throw cli_exception_s(cli_exception_s::err_no_mode_specified);
         }
         if (cli_type == CLI_COUNT_ALL && (head || tail || ban || ring)) {
-            std::clog << "Warning: -h/-t/-j/-r options is ignored. " << std::endl;
+            throw std::logic_error("-n mode doesn't support -h/-t/-j/-r options. ");
         }
         // 获取文件大小
         fseek(file, 0, SEEK_END);
@@ -173,7 +186,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < ret; i++) {
             fprintf(file, "%s\n", result[i]);
         }
-        if(ret != 0) {
+        if (ret != 0) {
             free(result[0]);
         }
         free(result);
