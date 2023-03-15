@@ -1,7 +1,7 @@
-std::string words_str[] = {"ab", "bc", "cd", "de"};
-int std_cnt_ans = 6;
-int std_word_ans = 4;
-int std_char_ans = 4;
+std::string words_str[] = {"aa", "ab"};
+int std_cnt_ans = 1;
+int std_word_ans = 2;
+int std_char_ans = 2;
 char head = '\0';
 char tail = '\0';
 char jail = '\0';

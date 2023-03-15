@@ -79,10 +79,18 @@ struct compute_context_t {
     }
 
     void get_SCC() {
-        for (int i = 0; i < MAX_N; i++) visit[i] = false;
+        for (int i = 0; i < MAX_N; i++) {
+            visit[i] = false;
+        }
         cnt = scc_tot = 0;
-        for (int i = 0; i < word_list.size(); i++) ver[word_list[i][0] - 'a'].push_back(i);
-        for (int i = 0; i < MAX_N; i++) if (!visit[i]) dfs_SCC(i);
+        for (int i = 0; i < word_list.size(); i++) {
+            ver[word_list[i][0] - 'a'].push_back(i);
+        }
+        for (int i = 0; i < MAX_N; i++) {
+            if (!visit[i]) {
+                dfs_SCC(i);
+            }
+        }
     }
 
     void check_loop() {
@@ -91,10 +99,12 @@ struct compute_context_t {
             int last = -1;
             for (int j: ver[i]) {
                 if (word_list[j].back() - 'a' == i) {
-                    if (last == -1) last = j;
-                    else
+                    if (last == -1) {
+                        last = j;
+                    } else {
                         throw logic_error(
                                 "Word ring detected, at least two self ring on one node!");
+                    }
                 }
             }
         }
@@ -171,9 +181,14 @@ struct compute_context_t {
             from[x] = self_from[x] = -1;
             for (int j: ver[x]) {
                 int to = word_list[j].back() - 'a';
-                if (to == x) continue;
+                if (to == x) {
+                    continue;
+                }
                 int val = f[to] + (weighted ? (int) word_list[j].length() : 1);
-                if (val > f[x]) f[x] = val, from[x] = j;
+                if (val > f[x]) {
+                    f[x] = val;
+                    from[x] = j;
+                }
             }
             for (auto j: ver[x]) {
                 int to = word_list[j].back() - 'a';
@@ -191,12 +206,22 @@ struct compute_context_t {
                 int u = word_list[i][0] - 'a', v = word_list[i].back() - 'a';
                 if (u == v) {
                     // 对于自环，需要判断 status[u] 是否只有自环，因为单词链长度大于1，单独一个自环无法构成单词链
-                    if (f[u] == (weighted ? (int) word_list[i].length() : 1)) continue;
-                    if (max_sum < f[u]) max_sum = f[u], pos = i;
+                    if (f[u] == (weighted ? (int) word_list[i].length() : 1)) {
+                        continue;
+                    }
+                    if (max_sum < f[u]) {
+                        max_sum = f[u];
+                        pos = i;
+                    }
                 } else {
-                    if (f[v] <= 0) continue;
+                    if (f[v] <= 0) {
+                        continue;
+                    }
                     int tmp_sum = f[v] + (weighted ? (int) word_list[i].length() : 1);
-                    if (max_sum < tmp_sum) max_sum = tmp_sum, pos = i;
+                    if (max_sum < tmp_sum) {
+                        max_sum = tmp_sum;
+                        pos = i;
+                    }
                 }
             }
         }
@@ -275,7 +300,10 @@ struct compute_context_t {
                     dfs_state(j); // 由于 dfs_max结束后一定会把val还原成val_bk，因此dfs_max结束后val还是0
                     int sum =
                             mp[make_pair(global_state, j)].first + edge_w[i][j][w_used[i][j] - 1ll].first; // 为什么减去1ll？
-                    if (ret < sum) ret = sum, id = j;
+                    if (ret < sum) {
+                        ret = sum;
+                        id = j;
+                    }
                     // 还原现场
                     global_state = global_state_bk;
                     w_used[i][j]--;
@@ -289,18 +317,21 @@ struct compute_context_t {
         // 初始化
         init_int128_base();
         global_state = 0;
-        for (int i = 0; i < MAX_N; i++)
+        for (int i = 0; i < MAX_N; i++) {
             for (int j = 0; j < MAX_N; j++) {
                 w_used[i][j] = 0;
             }
+        }
         for (int i = 0; i < word_list.size(); i++) {
             edge_w[word_list[i][0] - 'a'][word_list[i].back() - 'a'].emplace_back(
                     weighted ? (int) word_list[i].length() : 1, i);
             Ver[word_list[i][0] - 'a'].push_back(word_list[i].back() - 'a');
         }
-        for (auto &i: edge_w)
-            for (auto &j: i)
+        for (auto &i: edge_w) {
+            for (auto &j: i) {
                 sort(j.begin(), j.end(), greater<>());
+            }
+        }
         for (auto &i: Ver) {
             sort(i.begin(), i.end());
             i.erase(unique(i.begin(), i.end()), i.end());
@@ -319,10 +350,17 @@ struct compute_context_t {
             if (!head || head == word_list[i][0]) {
                 int u = word_list[i][0] - 'a', v = word_list[i].back() - 'a';
                 global_state = 0;
-                if (scc_col[u] == scc_col[v]) modify_global_state(i);
-                if (mp[make_pair(global_state, v)].first <= 0) continue;
+                if (scc_col[u] == scc_col[v]) {
+                    modify_global_state(i);
+                }
+                if (mp[make_pair(global_state, v)].first <= 0) {
+                    continue;
+                }
                 int Sum = mp[make_pair(global_state, v)].first + (weighted ? (int) word_list[i].length() : 1);
-                if (sum < Sum) sum = Sum, x = i;
+                if (sum < Sum) {
+                    sum = Sum;
+                    x = i;
+                }
             }
         }
         // 回溯答案
@@ -336,7 +374,9 @@ struct compute_context_t {
             x = word_list[x].back() - 'a';
             while (true) {
                 int j = mp[make_pair(global_state, x)].second;
-                if (j == -1) break;
+                if (j == -1) {
+                    break;
+                }
                 ans.push_back(word_list[edge_w[x][j][w_used[x][j]].second]);
                 if (scc_col[x] == scc_col[j]) {
                     modify_global_state(edge_w[x][j][w_used[x][j]].second);
