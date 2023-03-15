@@ -23,6 +23,7 @@ struct compute_context_t {
     vector<string> word_list;
 
     vector<string> ans;
+    vector<int> ans_vec;
 
     vector<int> ver[MAX_N + 5];
     vector<int> scc[MAX_N + 5];
@@ -228,7 +229,7 @@ struct compute_context_t {
     vector<pair<int, int> > edge_w[26][26]; // edge_w[i][j] 中存起点为 i，终点为 j 的边的 pair<边权，边id>
     vector<int> Ver[26]; // Ver[i] === ver[i]
     int w_used[26][26]; // 维护 edge_w[i][j] 中当前已经在 State 中的边数
-    int global_tail;
+    int global_tail = 0;
 
     void init_int128_base() {
         int128_base[0] = 1;

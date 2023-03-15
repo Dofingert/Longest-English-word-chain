@@ -54,28 +54,8 @@ TEST(gen_chains_all, no_loop_0) {
 #include "gen_chains_default.txt"
 }
 
-TEST(gen_chains_all, no_loop_1) {
-#include"test_point/no_loop_1.txt"
-#include "gen_chains_default.txt"
-}
-
-TEST(gen_chains_all, loop_0) {
-#include"test_point/loop_0.txt"
-#include "gen_chains_default.txt"
-}
-
 TEST(gen_chain_word, no_loop_0) {
 #include"test_point/no_loop_0.txt"
-#include "gen_chain_word_default.txt"
-}
-
-TEST(gen_chain_word, no_loop_1) {
-#include"test_point/no_loop_1.txt"
-#include "gen_chain_word_default.txt"
-}
-
-TEST(gen_chain_word, loop_0) {
-#include"test_point/loop_0.txt"
 #include "gen_chain_word_default.txt"
 }
 
@@ -84,29 +64,19 @@ TEST(gen_chain_char, no_loop_0) {
 #include "gen_chain_char_default.txt"
 }
 
-TEST(gen_chain_char, no_loop_1) {
+TEST(gen_chains_all, no_loop_1) {
 #include"test_point/no_loop_1.txt"
-#include "gen_chain_char_default.txt"
+#include "gen_chains_default.txt"
 }
 
-TEST(gen_chain_char, loop_0) {
-#include"test_point/loop_0.txt"
-#include "gen_chain_char_default.txt"
-}
-
-TEST(gen_chain_char, loop_1) {
-#include"test_point/loop_1.txt"
-#include "gen_chain_char_default.txt"
-}
-
-TEST(gen_chain_word, loop_1) {
-#include"test_point/loop_1.txt"
+TEST(gen_chain_word, no_loop_1) {
+#include"test_point/no_loop_1.txt"
 #include "gen_chain_word_default.txt"
 }
 
-TEST(gen_chains_all, loop_1) {
-#include"test_point/loop_1.txt"
-#include "gen_chains_default.txt"
+TEST(gen_chain_char, no_loop_1) {
+#include"test_point/no_loop_1.txt"
+#include "gen_chain_char_default.txt"
 }
 
 TEST(gen_chains_all, no_loop_2) {
@@ -124,13 +94,94 @@ TEST(gen_chain_char, no_loop_2) {
 #include "gen_chain_char_default.txt"
 }
 
+TEST(gen_chains_all, no_loop_3) {
+#include"test_point/no_loop_3.txt"
+#include "gen_chains_default.txt"
+}
+
+TEST(gen_chain_word, no_loop_3) {
+#include"test_point/no_loop_3.txt"
+#include "gen_chain_word_default.txt"
+}
+
 TEST(gen_chain_char, no_loop_3) {
 #include"test_point/no_loop_3.txt"
 #include "gen_chain_char_default.txt"
 }
 
+TEST(gen_chains_all, no_loop_4) {
+#include"test_point/no_loop_4.txt"
+#include "gen_chains_default.txt"
+}
+
+TEST(gen_chain_word, no_loop_4) {
+#include"test_point/no_loop_4.txt"
+#include "gen_chain_word_default.txt"
+}
+
 TEST(gen_chain_char, no_loop_4) {
 #include"test_point/no_loop_4.txt"
+#include "gen_chain_char_default.txt"
+}
+
+TEST(gen_chains_all, loop_0) {
+#include"test_point/loop_0.txt"
+#include "gen_chains_default.txt"
+}
+
+TEST(gen_chain_word, loop_0) {
+#include"test_point/loop_0.txt"
+#include "gen_chain_word_default.txt"
+}
+
+TEST(gen_chain_char, loop_0) {
+#include"test_point/loop_0.txt"
+#include "gen_chain_char_default.txt"
+}
+
+
+TEST(gen_chains_all, loop_1) {
+#include"test_point/loop_1.txt"
+#include "gen_chains_default.txt"
+}
+
+TEST(gen_chain_word, loop_1) {
+#include"test_point/loop_1.txt"
+#include "gen_chain_word_default.txt"
+}
+
+TEST(gen_chain_char, loop_1) {
+#include"test_point/loop_1.txt"
+#include "gen_chain_char_default.txt"
+}
+
+TEST(gen_chains_all, loop_2) {
+#include"test_point/loop_2.txt"
+#include "gen_chains_default.txt"
+}
+
+TEST(gen_chain_word, loop_2) {
+#include"test_point/loop_2.txt"
+#include "gen_chain_word_default.txt"
+}
+
+TEST(gen_chain_char, loop_2) {
+#include"test_point/loop_2.txt"
+#include "gen_chain_char_default.txt"
+}
+
+TEST(gen_chains_all, loop_3) {
+#include"test_point/loop_3.txt"
+#include "gen_chains_default.txt"
+}
+
+TEST(gen_chain_word, loop_3) {
+#include"test_point/loop_3.txt"
+#include "gen_chain_word_default.txt"
+}
+
+TEST(gen_chain_char, loop_3) {
+#include"test_point/loop_3.txt"
 #include "gen_chain_char_default.txt"
 }
 
