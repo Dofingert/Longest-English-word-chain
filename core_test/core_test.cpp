@@ -18,7 +18,9 @@ void std_check_gen_chains_all(std::string words_str[], int word_cnt, int cnt) {
         err_cnt += check_validation(dictionary, appeared, result[i]);
     }
     EXPECT_EQ(err_cnt, 0);
-    free(result[0]);
+    if (ret != 0) {
+        free(result[0]);
+    }
     free(result);
 }
 
@@ -45,7 +47,9 @@ std_check_gen_max(std::string words_str[], int word_cnt,
     }
     int err_cnt = check_validation(dictionary, appeared, str_builder.str().c_str());
     EXPECT_EQ(err_cnt, 0);
-    free(result[0]);
+    if (ret != 0) {
+        free(result[0]);
+    }
     free(result);
 }
 
@@ -182,6 +186,51 @@ TEST(gen_chain_word, loop_3) {
 
 TEST(gen_chain_char, loop_3) {
 #include"test_point/loop_3.txt"
+#include "gen_chain_char_default.txt"
+}
+
+TEST(gen_chains_all, excp_loop) {
+#include"test_point/excp_loop.txt"
+#include "gen_chains_default.txt"
+}
+
+TEST(gen_chain_word, excp_loop) {
+#include"test_point/excp_loop.txt"
+#include "gen_chain_word_default.txt"
+}
+
+TEST(gen_chain_char, excp_loop) {
+#include"test_point/excp_loop.txt"
+#include "gen_chain_char_default.txt"
+}
+
+TEST(gen_chains_all, head) {
+#include"test_point/head_sel.txt"
+#include "gen_chains_default.txt"
+}
+
+TEST(gen_chain_word, head) {
+#include"test_point/head_sel.txt"
+#include "gen_chain_word_default.txt"
+}
+
+TEST(gen_chain_char, head) {
+#include"test_point/head_sel.txt"
+#include "gen_chain_char_default.txt"
+}
+
+TEST(gen_chains_all, tail) {
+#include"test_point/tail_sel.txt"
+#include "gen_chains_default.txt"
+}
+
+TEST(gen_chain_word, tail) {
+#include"test_point/tail_sel.txt"
+#include "gen_chain_word_default.txt"
+}
+
+TEST(gen_chain_char, tail) {
+#include"test_point/tail_sel.txt"
 #include "gen_chain_char_default.txt"
 }
 
