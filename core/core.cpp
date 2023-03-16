@@ -416,7 +416,10 @@ int gen_chain_word(char *words[], int len, char *result[], char head, char tail,
     context->word_preprocessing(words, len, jail);
     context->get_SCC();
     if (!enable_loop) {
-        context->check_loop();
+        auto *tmp_context = new ComputeUnit;
+        tmp_context->word_preprocessing(words, len, 0);
+        tmp_context->get_SCC();
+        tmp_context->check_loop();
         int ret = context->get_longest_chain_on_DAG(result, head, tail, false, out_malloc);
         delete context;
         return ret;
@@ -434,7 +437,10 @@ int gen_chain_char(char *words[], int len, char *result[], char head, char tail,
     context->get_SCC();
     int ret;
     if (!enable_loop) {
-        context->check_loop();
+        auto *tmp_context = new ComputeUnit;
+        tmp_context->word_preprocessing(words, len, 0);
+        tmp_context->get_SCC();
+        tmp_context->check_loop();
         ret = context->get_longest_chain_on_DAG(result, head, tail, true, out_malloc);
     } else {
         ret = context->get_longest_chain(result, head, tail, true, out_malloc);
