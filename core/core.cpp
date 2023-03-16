@@ -18,8 +18,14 @@ const int MAX_ANS_CNT = 20000;
 const int INF = 0x3f3f3f3f;
 const int MAX_N = 26;
 
-struct compute_context_t {
+template<>
+struct hash<pair<LLL, int>> {
+    size_t operator()(const pair<LLL, int> &k) const {
+        return hash<LLL>()(k.first) ^ hash<int>()(k.second);
+    }
+};
 
+struct ComputeUnit {
     vector<string> word_list;
 
     vector<string> ans;
@@ -249,7 +255,7 @@ struct compute_context_t {
     }
 
     LLL int128_base[128];
-    map<pair<LLL, int>, pair<int, int> > mp; // tuple 中的两个 ll 组成 int128 表示 State， int 表示 i； pair<int, int> 表示 ans, from
+    unordered_map<pair<LLL, int>, pair<int, int> > mp; // tuple 中的两个 ll 组成 int128 表示 State， int 表示 i； pair<int, int> 表示 ans, from
     LLL global_state; // global_state 维护当前 dfs 到的 State，模拟 int128
     vector<pair<int, int> > edge_w[26][26]; // edge_w[i][j] 中存起点为 i，终点为 j 的边的 pair<边权，边id>
     vector<int> Ver[26]; // Ver[i] === ver[i]
@@ -395,7 +401,7 @@ struct compute_context_t {
 };
 
 int gen_chains_all(char *words[], int len, char *result[], void *out_malloc(size_t)) {
-    auto *context = new compute_context_t;
+    auto *context = new ComputeUnit;
     context->word_preprocessing(words, len, 0);
     context->get_SCC();
     context->check_loop();
@@ -406,7 +412,7 @@ int gen_chains_all(char *words[], int len, char *result[], void *out_malloc(size
 
 int gen_chain_word(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop,
                    void *out_malloc(size_t)) {
-    auto *context = new compute_context_t;
+    auto *context = new ComputeUnit;
     context->word_preprocessing(words, len, jail);
     context->get_SCC();
     if (!enable_loop) {
@@ -423,7 +429,7 @@ int gen_chain_word(char *words[], int len, char *result[], char head, char tail,
 
 int gen_chain_char(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop,
                    void *out_malloc(size_t)) {
-    auto *context = new compute_context_t;
+    auto *context = new ComputeUnit;
     context->word_preprocessing(words, len, jail);
     context->get_SCC();
     int ret;
