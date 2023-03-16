@@ -435,7 +435,7 @@ int gen_chain_word(char *words[], int len, char *result[], char head, char tail,
 int gen_chain_char(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop,
                    void *out_malloc(size_t)) {
     auto *context = new ComputeUnit;
-    int ret = 0;
+    int ret;
     if (!enable_loop) {
         context->word_preprocessing(words, len, 0);
         context->get_SCC();

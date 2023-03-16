@@ -7,11 +7,11 @@ typedef int (*max_cnt_f)(char *[], int, char *[], void *(*)(size_t));
 
 typedef int (*max_fut_f)(char *[], int, char *[], char, char, char, bool, void *(*)(size_t));
 
-const int word_cnt = 50; // 单词个数
+const int word_cnt = 60; // 单词个数
 const int loop_cnt = 100; // 测试点个数
 const int circle_allow = 1; // 是否允许测试点有环，1允许，0不允许
 
-void print_all_time(double result[], int cnt) {
+void print_all_time(const double result[], int cnt) {
     for (int i = 0; i < cnt; i++) {
         std::cout << i << " exec time: ";
         std::cout << result[i] * 1000 << " ms" << std::endl;
@@ -79,7 +79,8 @@ int main(int argc, char *argv[]) {
             double cnt_time[argc - 1];
             int word_result_table[argc - 1];
             double word_time[argc - 1];
-            int char_result_table[argc - 1];
+            int char_result_word_table[argc - 1];
+            int char_result_char_table[argc - 1];
             double char_time[argc - 1];
             std::set<int> cnt_result_set;
             std::set<int> word_result_set;
@@ -89,28 +90,29 @@ int main(int argc, char *argv[]) {
                 char **input = generator(26, ring == 0, word_cnt, loop_id + ring * 65536);
                 word_set_t dictionary = build_dictionary(word_cnt, input);
                 char **result = (char **) malloc(32768LL * sizeof(char *));
-                int link_cnt = -1;
+                int ret_word_cnt = -1;
                 try {
                     QueryPerformanceCounter(&time_1);
-                    link_cnt = cnt_func[i](input, word_cnt, result, malloc);
+                    ret_word_cnt = cnt_func[i](input, word_cnt, result, malloc);
                     QueryPerformanceCounter(&time_2);
                     word_set_t appear;
                     int err = 0;
-                    for (int line = 0; line < link_cnt; line++) {
-                        err += check_validation(dictionary, appear, result[line]);
+                    for (int line = 0; line < ret_word_cnt; line++) {
+                        err += check_validation(dictionary, appear, result[line], -1);
                     }
-                    if (link_cnt != 0) {
+                    if (ret_word_cnt != 0) {
                         free(result[0]);
                     }
                     if (err) {
                         cnt_result_table[i] = -2;
                         cnt_result_set.insert(-2);
                     } else {
-                        cnt_result_table[i] = link_cnt;
-                        cnt_result_set.insert(link_cnt);
+                        cnt_result_table[i] = ret_word_cnt;
+                        cnt_result_set.insert(ret_word_cnt);
                     }
                 } catch (std::exception &e) {
                     QueryPerformanceCounter(&time_2);
+                    std::cout << "cnt excp: " << e.what() << std::endl;
                     cnt_result_table[i] = -1;
                     cnt_result_set.insert(-1);
                 }
@@ -118,30 +120,31 @@ int main(int argc, char *argv[]) {
 
                 try {
                     QueryPerformanceCounter(&time_1);
-                    link_cnt = max_word_func[i](input, word_cnt, result, '\0', '\0', '\0', ring, malloc);
+                    ret_word_cnt = max_word_func[i](input, word_cnt, result, '\0', '\0', '\0', ring, malloc);
                     QueryPerformanceCounter(&time_2);
                     word_set_t appear;
                     int err = 0;
                     std::stringstream result_str;
-                    for (int line = 0; line < link_cnt; line++) {
+                    for (int line = 0; line < ret_word_cnt; line++) {
                         result_str << result[line];
-                        if (line != link_cnt - 1) {
+                        if (line != ret_word_cnt - 1) {
                             result_str << ' ';
                         }
                     }
-                    err = check_validation(dictionary, appear, result_str.str().c_str());
-                    if (link_cnt != 0) {
+                    err = check_validation(dictionary, appear, result_str.str().c_str(), ret_word_cnt);
+                    if (ret_word_cnt != 0) {
                         free(result[0]);
                     }
                     if (err) {
                         word_result_table[i] = -2;
                         word_result_set.insert(-2);
                     } else {
-                        word_result_table[i] = link_cnt;
-                        word_result_set.insert(link_cnt);
+                        word_result_table[i] = ret_word_cnt;
+                        word_result_set.insert(ret_word_cnt);
                     }
                 } catch (std::exception &e) {
                     QueryPerformanceCounter(&time_2);
+                    std::cout << "word excp: " << e.what() << std::endl;
                     word_result_table[i] = -1;
                     word_result_set.insert(-1);
                 }
@@ -149,31 +152,34 @@ int main(int argc, char *argv[]) {
 
                 try {
                     QueryPerformanceCounter(&time_1);
-                    link_cnt = max_char_func[i](input, word_cnt, result, '\0', '\0', '\0', ring, malloc);
+                    ret_word_cnt = max_char_func[i](input, word_cnt, result, '\0', '\0', '\0', ring, malloc);
                     QueryPerformanceCounter(&time_2);
                     word_set_t appear;
-                    int err = 0;
+                    int err;
                     std::stringstream result_str;
-                    for (int line = 0; line < link_cnt; line++) {
-                        result_str << result[line];
-                        if (line != link_cnt - 1) {
+                    int char_cnt = 0;
+                    for (int word_id = 0; word_id < ret_word_cnt; word_id++) {
+                        result_str << result[word_id];
+                        char_cnt += (int) strlen(result[word_id]);
+                        if (word_id != ret_word_cnt - 1) {
                             result_str << ' ';
                         }
                     }
-                    err = check_validation(dictionary, appear, result_str.str().c_str());
-                    if (link_cnt != 0) {
+                    err = check_validation(dictionary, appear, result_str.str().c_str(), ret_word_cnt);
+                    if (ret_word_cnt != 0) {
                         free(result[0]);
                     }
                     if (err) {
-                        char_result_table[i] = -2;
+                        char_result_word_table[i] = -2;
                         char_result_set.insert(-2);
                     } else {
-                        char_result_table[i] = link_cnt;
-                        char_result_set.insert(link_cnt);
+                        char_result_word_table[i] = char_cnt;
+                        char_result_set.insert(char_cnt);
                     }
                 } catch (std::exception &e) {
                     QueryPerformanceCounter(&time_2);
-                    char_result_table[i] = -1;
+                    std::cout << "char excp: " << e.what() << std::endl;
+                    char_result_word_table[i] = -1;
                     char_result_set.insert(-1);
                 }
                 char_time[i] = (double) (time_2.QuadPart - time_1.QuadPart) / (double) cnt_freq.QuadPart;
@@ -185,6 +191,7 @@ int main(int argc, char *argv[]) {
             }
             if (cnt_result_set.size() == 1 && cnt_result_set.find(-2) == cnt_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
+                          << "excp: " << ((cnt_result_table[0] == -1) ? "true " : "false ")
                           << "cnt_result_set match in all point!" << std::endl;
                 print_all_time(cnt_time, argc - 1);
             } else {
@@ -203,6 +210,7 @@ int main(int argc, char *argv[]) {
             }
             if (word_result_set.size() == 1 && word_result_set.find(-2) == word_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
+                          << "excp: " << ((word_result_table[0] == -1) ? "true " : "false ")
                           << "word_result_set match in all point!" << std::endl;
                 print_all_time(word_time, argc - 1);
             } else {
@@ -221,12 +229,13 @@ int main(int argc, char *argv[]) {
             }
             if (char_result_set.size() == 1 && char_result_set.find(-2) == char_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
+                          << "excp: " << ((char_result_word_table[0] == -1) ? "true " : "false ")
                           << "char_result_set match in all point!" << std::endl;
                 print_all_time(char_time, argc - 1);
             } else {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
                           << "char_result_set mismatch!" << std::endl;
-                print_all(char_result_table, argc - 1);
+                print_all(char_result_word_table, argc - 1);
                 FILE *fp = fopen("err_data.txt", "w");
                 char **data = generator(26, ring == 0, word_cnt, loop_id + ring * 65536);
                 for (int i = 0; i < word_cnt; i++) {

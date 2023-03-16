@@ -13,7 +13,7 @@ int dp(char *words[], int len, char head, char tail, bool weighted);
 
 char **generator(int n, bool DAG, int word_cnt, unsigned int Seed);
 
-int check_validation(const word_set_t &dictionary, word_set_t &appeared, const char *word_list);
+int check_validation(const word_set_t &dictionary, word_set_t &appeared, const char *word_list, int word_cnt);
 
 word_set_t build_dictionary(int cnt, char **words);
 

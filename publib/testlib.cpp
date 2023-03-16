@@ -4,7 +4,7 @@
 
 typedef std::set<XXH64_hash_t> word_set_t;
 
-int check_validation(const word_set_t &dictionary, word_set_t &appeared, const char *word_list) {
+int check_validation(const word_set_t &dictionary, word_set_t &appeared, const char *word_list, int expect_len) {
     // 检查word_list是否合法
     // 由一个字母开头，所有字母均为小写
     // 不存在连续两位的空白符
@@ -16,6 +16,7 @@ int check_validation(const word_set_t &dictionary, word_set_t &appeared, const c
         IN_WORD,
         WAIT_WORD
     } fsm_state = WAIT_WORD;
+    int acc_len = 0;
     int last_pos = 0;
     char end_char = '\0';
     int pos = 0;
@@ -52,6 +53,7 @@ int check_validation(const word_set_t &dictionary, word_set_t &appeared, const c
                 // 出现大写字符
                 return 1;
             }
+            acc_len++;
             fsm_state = IN_WORD;
             last_pos = pos;
         }
@@ -70,6 +72,9 @@ int check_validation(const word_set_t &dictionary, word_set_t &appeared, const c
     // 计算合法word_list的hash 检查是否出现过在appeared中 (检查重复单词列)
     XXH64_hash_t chain_hash = XXH64(word_list, pos, 0);
     if (appeared.find(chain_hash) != appeared.end()) {
+        return 1;
+    }
+    if(acc_len == 1 || (expect_len >= 0 && acc_len != expect_len)) {
         return 1;
     }
     appeared.insert(chain_hash);
