@@ -15,7 +15,7 @@ void std_check_gen_chains_all(std::string words_str[], int word_cnt, int cnt) {
     word_set_t dictionary = build_dictionary(word_cnt, const_cast<char **>(words));
     int err_cnt = 0;
     for (int i = 0; i < ret; i++) {
-        err_cnt += check_validation(dictionary, appeared, result[i]);
+        err_cnt += check_validation(dictionary, appeared, result[i], -1);
     }
     EXPECT_EQ(err_cnt, 0);
     if (ret != 0) {
@@ -45,7 +45,7 @@ std_check_gen_max(std::string words_str[], int word_cnt,
             str_builder << ' ';
         }
     }
-    int err_cnt = check_validation(dictionary, appeared, str_builder.str().c_str());
+    int err_cnt = check_validation(dictionary, appeared, str_builder.str().c_str(), -1);
     EXPECT_EQ(err_cnt, 0);
     if (ret != 0) {
         free(result[0]);

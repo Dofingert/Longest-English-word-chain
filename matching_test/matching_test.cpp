@@ -2,6 +2,8 @@
 #include <windows.h>
 #include <testlib.h>
 #include <sstream>
+#include <chrono>
+#include <random>
 
 typedef int (*max_cnt_f)(char *[], int, char *[], void *(*)(size_t));
 
@@ -10,6 +12,20 @@ typedef int (*max_fut_f)(char *[], int, char *[], char, char, char, bool, void *
 const int word_cnt = 60; // 单词个数
 const int loop_cnt = 100; // 测试点个数
 const int circle_allow = 1; // 是否允许测试点有环，1允许，0不允许
+typedef std::mt19937  Random_mt19937;
+Random_mt19937  rnd(std::chrono::system_clock::now().time_since_epoch().count());
+
+int rand_int(int r) {
+    return rnd() % r;
+}
+
+char rand_char() {
+    return rand_int(26) + 'a';
+}
+
+bool coin(int k) {
+    return rand_int(k) == 1;
+}
 
 void print_all_time(const double result[], int cnt) {
     for (int i = 0; i < cnt; i++) {
@@ -85,9 +101,22 @@ int main(int argc, char *argv[]) {
             std::set<int> cnt_result_set;
             std::set<int> word_result_set;
             std::set<int> char_result_set;
+
+            char **input = generator(26, ring == 0 && coin(10), word_cnt, loop_id + ring * 65536);
+            char head = '\0', tail = '\0', jail = '\0';
+            if (coin(2)) {
+                head = rand_char();
+            }
+            if (coin(2)) {
+                tail = rand_char();
+            }
+            if (coin(2)) {
+                jail = rand_char();
+            }
+
             for (int i = 0; i < argc - 1; i++) {
                 LARGE_INTEGER time_1, time_2;
-                char **input = generator(26, ring == 0, word_cnt, loop_id + ring * 65536);
+
                 word_set_t dictionary = build_dictionary(word_cnt, input);
                 char **result = (char **) malloc(32768LL * sizeof(char *));
                 int ret_word_cnt = -1;
@@ -185,10 +214,13 @@ int main(int argc, char *argv[]) {
                 char_time[i] = (double) (time_2.QuadPart - time_1.QuadPart) / (double) cnt_freq.QuadPart;
 
                 free(result);
-                free(input[0]);
-                free(input);
+
                 time_cnt[i] += cnt_time[i] + word_time[i] + char_time[i];
             }
+
+            free(input[0]);
+            free(input);
+
             if (cnt_result_set.size() == 1 && cnt_result_set.find(-2) == cnt_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
                           << "excp: " << ((cnt_result_table[0] == -1) ? "true " : "false ")
