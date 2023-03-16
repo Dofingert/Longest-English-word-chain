@@ -32,23 +32,6 @@ void print_all(int result[], int cnt) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc == 2) {
-        int loop_id;
-        sscanf(argv[1], "%d", &loop_id);
-        FILE *fp = fopen("no_ring.txt", "w");
-        char **random_data = generator(26, true, 26, loop_id + 0 * 65536);
-        for (int cnt = 0; cnt < 26; cnt++) {
-            fprintf(fp, "%s ", random_data[cnt]);
-        }
-        fclose(fp);
-        fp = fopen("with_ring.txt", "w");
-        random_data = generator(6, false, 27, loop_id + 1 * 65536);
-        for (int cnt = 0; cnt < 26; cnt++) {
-            fprintf(fp, "%s ", random_data[cnt]);
-        }
-        fclose(fp);
-        return 0;
-    }
     if (argc < 3) {
         std::cout << "Usage: maching_test dll_under_test{2,} ..." << std::endl;
         return -1;
@@ -57,7 +40,9 @@ int main(int argc, char *argv[]) {
     max_fut_f max_word_func[argc - 1];
     max_fut_f max_char_func[argc - 1];
     max_cnt_f cnt_func[argc - 1];
+    // 动态链接库
     HINSTANCE hInstLib[argc - 1];
+    // windows 计时器
     double time_cnt[argc - 1];
     for (int i = 0; i < argc - 1; i++) {
         time_cnt[i] = 0.f;
@@ -70,6 +55,7 @@ int main(int argc, char *argv[]) {
         if (hInstLib[prog - 1] == nullptr) {
             throw std::logic_error("Cannot load library: " + std::string(argv[prog]));
         }
+        // 获取函数地址
         max_word_func[prog - 1] = (max_fut_f) GetProcAddress(hInstLib[prog - 1], "gen_chain_word");
         max_char_func[prog - 1] = (max_fut_f) GetProcAddress(hInstLib[prog - 1], "gen_chain_char");
         cnt_func[prog - 1] = (max_cnt_f) GetProcAddress(hInstLib[prog - 1], "gen_chains_all");
