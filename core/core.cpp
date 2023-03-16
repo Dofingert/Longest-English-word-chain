@@ -19,7 +19,7 @@ const int INF = 0x3f3f3f3f;
 const int MAX_N = 26;
 
 template<>
-struct hash<pair<LLL, int>> {
+struct std::hash<pair<LLL, int>> {
     size_t operator()(const pair<LLL, int> &k) const {
         return hash<LLL>()(k.first) ^ hash<int>()(k.second);
     }
