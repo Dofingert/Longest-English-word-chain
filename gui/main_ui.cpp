@@ -82,11 +82,11 @@ void pending_job_t::compute_load() {
             ret = gen_chains_all(word_list.data(), word_num, result, malloc);
         } else if (mode == 1) {
             // find max word
-            ret = gen_chain_char(word_list.data(), word_num, result, head, tail, jail, ring,
+            ret = gen_chain_word(word_list.data(), word_num, result, head, tail, jail, ring,
                                  malloc);
         } else {
             // find max char
-            ret = gen_chain_word(word_list.data(), word_num, result, head, tail, jail, ring,
+            ret = gen_chain_char(word_list.data(), word_num, result, head, tail, jail, ring,
                                  malloc);
         }
         // generate result string

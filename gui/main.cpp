@@ -5,7 +5,8 @@
 
 typedef int (*max_cnt_f)(char *[], int, char *[], void *(*)(size_t));
 
-typedef int (*max_fut_f)(char *[], int, char *[], char, char, char, bool, void *(*)(size_t));
+typedef int (*max_fut_f)(char *[], int, char *[], char, char, char, bool,
+                         void *(*)(size_t));
 
 max_cnt_f gen_chains_all;
 max_fut_f gen_chain_word;
@@ -26,7 +27,7 @@ int main(int argc, char *argv[]) {
     gen_chain_word = (max_fut_f) GetProcAddress(core_lib, "gen_chain_word");
     gen_chain_char = (max_fut_f) GetProcAddress(core_lib, "gen_chain_char");
 
-    if(gen_chains_all == nullptr || gen_chain_word == nullptr || gen_chain_char == nullptr) {
+    if (gen_chains_all == nullptr || gen_chain_word == nullptr || gen_chain_char == nullptr) {
         QMessageBox::critical(nullptr, "严重错误", "core.dll不含必须的函数",
                               QMessageBox::Escape, QMessageBox::Escape);
     }
