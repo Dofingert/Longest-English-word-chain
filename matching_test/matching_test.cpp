@@ -9,7 +9,8 @@ typedef int (*max_cnt_f)(char *[], int, char *[], void *(*)(size_t));
 
 typedef int (*max_fut_f)(char *[], int, char *[], char, char, char, bool, void *(*)(size_t));
 
-const int word_cnt = 60; // 单词个数
+const int DAG_word_cnt = 10000; // 无环图单词个数上限
+const int Ring_word_cnt = 100; // 有环图单词个数上限
 const int loop_cnt = 100; // 测试点个数
 const int circle_allow = 1; // 是否允许测试点有环，1允许，0不允许
 typedef std::mt19937  Random_mt19937;
@@ -90,6 +91,12 @@ int main(int argc, char *argv[]) {
     for (int loop_id = 0; loop_id < loop_cnt; loop_id++) {
         // NO RING TEST
         for (int ring = 0; ring <= circle_allow; ring++) {
+            int word_cnt;
+            if (ring == 0) {
+                word_cnt = rand_int(DAG_word_cnt);
+            } else {
+                word_cnt = rand_int(Ring_word_cnt);
+            }
             // 0 无环，1 有环
             int cnt_result_table[argc - 1];
             double cnt_time[argc - 1];
