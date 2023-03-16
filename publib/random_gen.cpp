@@ -65,7 +65,7 @@ char **generator(int n, bool DAG, int word_cnt, unsigned int Seed) {
     words[0] = (char *) malloc(word_cnt * 13);
     char *alloca_space = words[0];
     for (int i = 0; i < word_cnt; i++) {
-        int len = rnd() % 10 + 3;
+        int len = rnd() % 30 + 3;
 //        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
         words[i] = alloca_space;
         alloca_space += len + 1;
