@@ -11,13 +11,9 @@
 
 struct cli_exception_s : public std::exception {
     enum exception_type_e {
-        err_out_of_mem,
-        err_file_size,
         err_no_mode_specified,
         err_file_error,
-        err_missing_input_char,
-        err_no_alpha_char,
-        err_repeated_args
+        err_repeated_mode
     } err_type;
 
     cli_exception_s(exception_type_e type) {
@@ -26,13 +22,9 @@ struct cli_exception_s : public std::exception {
 
     const char *what() const noexcept override {
         static std::string exception[] = {
-                "Out of memory.",
-                "Opening file size is too large.",
-                "No specified mode selected, use -n/-w/-c to select one.",
-                "Invalid input file. ",
-                "Missing a char, need a char after -h/-t/-j options. ",
-                "Need an alpha char after -h/-t/-j options. ",
-                "Repeated args, do not repeatedly use one args. "
+                "Error: No specified mode selected, use -n/-w/-c!",
+                "Error: No input file found!",
+                "Error: Multiple mode selected, only support one -n/-w/-c argument!"
         };
         return exception[err_type].c_str();
     }

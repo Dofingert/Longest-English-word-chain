@@ -67,56 +67,50 @@ int main(int argc, char *argv[]) {
                 if (cli_type == CLI_UNDEFINED) {
                     cli_type = CLI_COUNT_ALL;
                 } else {
-                    throw cli_exception_s(cli_exception_s::err_repeated_args);
+                    throw cli_exception_s(cli_exception_s::err_repeated_mode);
                 }
             } else if (strcmp(argv[i], "-w") == 0) {
                 if (cli_type == CLI_UNDEFINED) {
                     cli_type = CLI_MAX_WORD;
                 } else {
-                    throw cli_exception_s(cli_exception_s::err_repeated_args);
+                    throw cli_exception_s(cli_exception_s::err_repeated_mode);
                 }
             } else if (strcmp(argv[i], "-c") == 0) {
                 if (cli_type == CLI_UNDEFINED) {
                     cli_type = CLI_MAX_CHAR;
                 } else {
-                    throw cli_exception_s(cli_exception_s::err_repeated_args);
+                    throw cli_exception_s(cli_exception_s::err_repeated_mode);
                 }
             } else if (strcmp(argv[i], "-r") == 0) {
                 if (!ring) {
                     ring = true;
                 } else {
-                    throw cli_exception_s(cli_exception_s::err_repeated_args);
+                    throw std::logic_error("Error: Repeated args, do not repeatedly use -r!");
                 }
             } else if (strcmp(argv[i], "-h") == 0) {
                 i += 1;
                 if (head) {
-                    throw cli_exception_s(cli_exception_s::err_repeated_args);
-                } else if (i >= argc || strlen(argv[i]) > 1) {
-                    throw cli_exception_s(cli_exception_s::err_missing_input_char);
-                } else if (!isalpha(argv[i][0])) {
-                    throw cli_exception_s(cli_exception_s::err_no_alpha_char);
+                    throw std::logic_error("Error: Repeated args, do not repeatedly use -h!");
+                } else if (i >= argc || strlen(argv[i]) > 1 || !isalpha(argv[i][0])) {
+                    throw std::logic_error("Error: Need letter after -h!");
                 } else {
                     head = argv[i][0] | ('a' ^ 'A');
                 }
             } else if (strcmp(argv[i], "-t") == 0) {
                 i += 1;
                 if (tail) {
-                    throw cli_exception_s(cli_exception_s::err_repeated_args);
-                } else if (i >= argc || strlen(argv[i]) > 1) {
-                    throw cli_exception_s(cli_exception_s::err_missing_input_char);
-                } else if (!isalpha(argv[i][0])) {
-                    throw cli_exception_s(cli_exception_s::err_no_alpha_char);
+                    throw std::logic_error("Error: Repeated args, do not repeatedly use -t!");
+                } else if (i >= argc || strlen(argv[i]) > 1 || !isalpha(argv[i][0])) {
+                    throw std::logic_error("Error: Need letter after -t!");
                 } else {
                     tail = argv[i][0] | ('a' ^ 'A');
                 }
             } else if (strcmp(argv[i], "-j") == 0) {
                 i += 1;
                 if (ban) {
-                    throw cli_exception_s(cli_exception_s::err_repeated_args);
-                } else if (i >= argc || strlen(argv[i]) > 1) {
-                    throw cli_exception_s(cli_exception_s::err_missing_input_char);
-                } else if (!isalpha(argv[i][0])) {
-                    throw cli_exception_s(cli_exception_s::err_no_alpha_char);
+                    throw std::logic_error("Error: Repeated args, do not repeatedly use -j!");
+                } else if (i >= argc || strlen(argv[i]) > 1 || !isalpha(argv[i][0])) {
+                    throw std::logic_error("Error: Need letter after -j!");
                 } else {
                     ban = argv[i][0] | ('a' ^ 'A');
                 }
@@ -131,15 +125,16 @@ int main(int argc, char *argv[]) {
                     file_name_end[c] = tolower(file_name_end[c]);
                 }
                 if (strcmp(file_name_end, ".txt") != 0) {
-                    throw std::logic_error("Input file is Not a .txt file!");
+                    throw std::logic_error(
+                            "Error: \"" + std::string(argv[i]) + "\" is neither a text file nor an argument!");
                 }
                 // 打开输入文件
                 if (file) {
-                    throw cli_exception_s(cli_exception_s::err_repeated_args);
+                    throw std::logic_error("Error: Only support one input file!");
                 } else {
                     file = fopen(argv[i], "r");
                     if (file == nullptr) {
-                        throw cli_exception_s(cli_exception_s::err_file_error);
+                        throw std::logic_error("Error: Cannot find input file: \"" + std::string(argv[i]) + "\"!");
                     }
                 }
             }
@@ -151,7 +146,7 @@ int main(int argc, char *argv[]) {
             throw cli_exception_s(cli_exception_s::err_no_mode_specified);
         }
         if (cli_type == CLI_COUNT_ALL && (head || tail || ban || ring)) {
-            throw std::logic_error("-n mode doesn't support -h/-t/-j/-r options. ");
+            throw std::logic_error("Error: -n mode doesn't support -h/-t/-j/-r options!");
         }
         // 获取文件大小
         fseek(file, 0, SEEK_END);
@@ -159,7 +154,8 @@ int main(int argc, char *argv[]) {
 
         // 检查文件大小并分配空间
         if (file_size > MAX_FILE_SIZE) {
-            throw cli_exception_s(cli_exception_s::err_file_size);
+            throw std::logic_error("Error: Input filesize " + std::to_string(file_size / 1024) +
+                                   "kb is too large. Support up to " + std::to_string(MAX_FILE_SIZE / 1024) + "kb!");
         }
         input_buffer = (char *) (malloc(file_size + 1));
         fseek(file, 0, SEEK_SET);
