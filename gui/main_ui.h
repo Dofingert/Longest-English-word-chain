@@ -16,6 +16,7 @@ QT_END_NAMESPACE
 class pending_job_t : public QObject {
 Q_OBJECT
 public:
+    int cal_time;
     int mode;
     char head;
     char tail;

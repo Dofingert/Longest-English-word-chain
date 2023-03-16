@@ -16,6 +16,7 @@
 #define XXH_INLINE_ALL
 
 #include "xxhash.h"
+#include <QTime>
 
 typedef int (*max_cnt_f)(char *[], int, char *[], void *(*)(size_t));
 
@@ -69,6 +70,7 @@ pending_job_t::pending_job_t(int in_mode, char in_head, char in_tail, char in_ja
 
 void pending_job_t::compute_load() {
 //    QThread::sleep(1); // 测试延迟
+    QTime start_time = QTime::currentTime();
     std::vector<char *> word_list;
     char *input_buffer = new char[input_string.size() + 1];
     strcpy(input_buffer, input_string.c_str());
@@ -110,6 +112,7 @@ void pending_job_t::compute_load() {
     }
     delete[] input_buffer;
     delete[] result;
+    cal_time = start_time.msecsTo(QTime::currentTime());
     emit finish_signal();
 }
 
@@ -165,7 +168,9 @@ void main_ui::computation_finish() {
         emit start_computation();
     } else {
         calculating = false;
-        ui->status_label->setText("Status: <font color = #4896FA >Ready</font>");
+        std::stringstream builder;
+        builder << "Status: <font color = #4896FA >Ready</font> (in " << pending_cal->cal_time << "ms)";
+        ui->status_label->setText(QString::fromStdString(builder.str()));
         // 更新UI
         ui->text_output->setText(QString::fromStdString(pending_cal->ans));
     }

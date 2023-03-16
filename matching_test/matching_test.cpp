@@ -58,6 +58,10 @@ int main(int argc, char *argv[]) {
     max_fut_f max_char_func[argc - 1];
     max_cnt_f cnt_func[argc - 1];
     HINSTANCE hInstLib[argc - 1];
+    double time_cnt[argc - 1];
+    for (int i = 0; i < argc - 1; i++) {
+        time_cnt[i] = 0.f;
+    }
     LARGE_INTEGER cnt_freq;
     QueryPerformanceFrequency(&cnt_freq);
 
@@ -191,6 +195,7 @@ int main(int argc, char *argv[]) {
                 free(result);
                 free(input[0]);
                 free(input);
+                time_cnt[i] += cnt_time[i] + word_time[i] + char_time[i];
             }
             if (cnt_result_set.size() == 1 && cnt_result_set.find(-2) == cnt_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
@@ -248,9 +253,10 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-
+    // print all time
     // free all dll
     for (int i = 0; i < argc - 1; i++) {
+        std::cout << "0 total exec time: " << time_cnt[i] * 1000 << "ms" << std::endl;
         FreeLibrary(hInstLib[i]);
     }
 
