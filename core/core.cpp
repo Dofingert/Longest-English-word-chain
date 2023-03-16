@@ -413,36 +413,33 @@ int gen_chains_all(char *words[], int len, char *result[], void *out_malloc(size
 int gen_chain_word(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop,
                    void *out_malloc(size_t)) {
     auto *context = new ComputeUnit;
-    context->word_preprocessing(words, len, jail);
-    context->get_SCC();
+    int ret = 0;
     if (!enable_loop) {
-        auto *tmp_context = new ComputeUnit;
-        tmp_context->word_preprocessing(words, len, 0);
-        tmp_context->get_SCC();
-        tmp_context->check_loop();
-        int ret = context->get_longest_chain_on_DAG(result, head, tail, false, out_malloc);
-        delete context;
-        return ret;
+        context->word_preprocessing(words, len, 0);
+        context->get_SCC();
+        context->check_loop();
+        ret = context->get_longest_chain_on_DAG(result, head, tail, false, out_malloc);
     } else {
-        int ret = context->get_longest_chain(result, head, tail, false, out_malloc);
-        delete context;
-        return ret;
+        context->word_preprocessing(words, len, jail);
+        context->get_SCC();
+        ret = context->get_longest_chain(result, head, tail, false, out_malloc);
     }
+    delete context;
+    return ret;
 }
 
 int gen_chain_char(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop,
                    void *out_malloc(size_t)) {
+    int ret = 0;
     auto *context = new ComputeUnit;
-    context->word_preprocessing(words, len, jail);
-    context->get_SCC();
-    int ret;
     if (!enable_loop) {
-        auto *tmp_context = new ComputeUnit;
-        tmp_context->word_preprocessing(words, len, 0);
-        tmp_context->get_SCC();
-        tmp_context->check_loop();
+        context->word_preprocessing(words, len, 0);
+        context->get_SCC();
+        context->check_loop();
         ret = context->get_longest_chain_on_DAG(result, head, tail, true, out_malloc);
     } else {
+        context->word_preprocessing(words, len, jail);
+        context->get_SCC();
         ret = context->get_longest_chain(result, head, tail, true, out_malloc);
     }
     delete context;
