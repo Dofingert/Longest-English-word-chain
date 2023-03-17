@@ -10,7 +10,7 @@ typedef int (*max_cnt_f)(char *[], int, char *[], void *(*)(size_t));
 typedef int (*max_fut_f)(char *[], int, char *[], char, char, char, bool, void *(*)(size_t));
 
 const int DAG_word_cnt = 10000; // 无环图单词个数上限
-const int Ring_word_cnt = 100; // 有环图单词个数上限
+const int Ring_word_cnt = 50; // 有环图单词个数上限
 const int loop_cnt = 100; // 测试点个数
 const int circle_allow = 1; // 是否允许测试点有环，1允许，0不允许
 typedef std::mt19937  Random_mt19937;
@@ -229,12 +229,12 @@ int main(int argc, char *argv[]) {
             free(input);
 
             if (cnt_result_set.size() == 1 && cnt_result_set.find(-2) == cnt_result_set.end()) {
-                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
+                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head << " tail: " << tail << " jail: " << jail << " "
                           << "excp: " << ((cnt_result_table[0] == -1) ? "true " : "false ")
                           << "cnt_result_set match in all point!" << std::endl;
                 print_all_time(cnt_time, argc - 1);
             } else {
-                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
+                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head << " tail: " << tail << " jail: " << jail << " "
                           << "cnt_result_set mismatch!" << std::endl;
                 print_all(cnt_result_table, argc - 1);
                 FILE *fp = fopen("err_data.txt", "w");
@@ -248,12 +248,12 @@ int main(int argc, char *argv[]) {
                 return -1;
             }
             if (word_result_set.size() == 1 && word_result_set.find(-2) == word_result_set.end()) {
-                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
+                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head << " tail: " << tail << " jail: " << jail << " "
                           << "excp: " << ((word_result_table[0] == -1) ? "true " : "false ")
                           << "word_result_set match in all point!" << std::endl;
                 print_all_time(word_time, argc - 1);
             } else {
-                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
+                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head << " tail: " << tail << " jail: " << jail << " "
                           << "word_result_set mismatch!" << std::endl;
                 print_all(word_result_table, argc - 1);
                 FILE *fp = fopen("err_data.txt", "w");
@@ -267,12 +267,12 @@ int main(int argc, char *argv[]) {
                 return -1;
             }
             if (char_result_set.size() == 1 && char_result_set.find(-2) == char_result_set.end()) {
-                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
+                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head << " tail: " << tail << " jail: " << jail << " "
                           << "excp: " << ((char_result_word_table[0] == -1) ? "true " : "false ")
                           << "char_result_set match in all point!" << std::endl;
                 print_all_time(char_time, argc - 1);
             } else {
-                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ")
+                std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head << " tail: " << tail << " jail: " << jail << " "
                           << "char_result_set mismatch!" << std::endl;
                 print_all(char_result_word_table, argc - 1);
                 FILE *fp = fopen("err_data.txt", "w");
