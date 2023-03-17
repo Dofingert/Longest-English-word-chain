@@ -11,7 +11,7 @@ typedef int (*max_fut_f)(char *[], int, char *[], char, char, char, bool, void *
 
 const int DAG_word_cnt = 10000; // 无环图单词个数上限
 const int Ring_word_cnt = 60; // 有环图单词个数上限
-const int loop_cnt = 100; // 测试点个数
+const int loop_cnt = 200; // 测试点个数
 const int circle_allow = 1; // 是否允许测试点有环，1允许，0不允许
 typedef std::mt19937 Random_mt19937;
 Random_mt19937 rnd(std::chrono::system_clock::now().time_since_epoch().count());
@@ -225,11 +225,6 @@ int main(int argc, char *argv[]) {
                 time_cnt[i] += cnt_time[i] + word_time[i] + char_time[i];
             }
 
-            if (word_cnt != 0) {
-                free(input[0]);
-                free(input);
-            }
-
             if (cnt_result_set.size() == 1 && cnt_result_set.find(-2) == cnt_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head
                           << " tail: " << tail << " jail: " << jail << " "
@@ -242,12 +237,9 @@ int main(int argc, char *argv[]) {
                           << "cnt_result_set mismatch!" << std::endl;
                 print_all(cnt_result_table, argc - 1);
                 FILE *fp = fopen("err_data.txt", "w");
-                char **data = generator(26, ring == 0, word_cnt, loop_id + ring * 65536);
                 for (int i = 0; i < word_cnt; i++) {
-                    fprintf(fp, "%s\n", data[i]);
+                    fprintf(fp, "%s\n", input[i]);
                 }
-                free(data[0]);
-                free(data);
                 fclose(fp);
                 return -1;
             }
@@ -263,12 +255,9 @@ int main(int argc, char *argv[]) {
                           << "word_result_set mismatch!" << std::endl;
                 print_all(word_result_table, argc - 1);
                 FILE *fp = fopen("err_data.txt", "w");
-                char **data = generator(26, ring == 0, word_cnt, loop_id + ring * 65536);
                 for (int i = 0; i < word_cnt; i++) {
-                    fprintf(fp, "%s\n", data[i]);
+                    fprintf(fp, "%s\n", input[i]);
                 }
-                free(data[0]);
-                free(data);
                 fclose(fp);
                 return -1;
             }
@@ -284,14 +273,16 @@ int main(int argc, char *argv[]) {
                           << "char_result_set mismatch!" << std::endl;
                 print_all(char_result_word_table, argc - 1);
                 FILE *fp = fopen("err_data.txt", "w");
-                char **data = generator(26, ring == 0, word_cnt, loop_id + ring * 65536);
                 for (int i = 0; i < word_cnt; i++) {
-                    fprintf(fp, "%s\n", data[i]);
+                    fprintf(fp, "%s\n", input[i]);
                 }
-                free(data[0]);
-                free(data);
                 fclose(fp);
                 return -1;
+            }
+
+            if (word_cnt != 0) {
+                free(input[0]);
+                free(input);
             }
         }
     }
