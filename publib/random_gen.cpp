@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <algorithm>
 #include <cstring>
+#include <bits/stdc++.h>
+using namespace std;
 
 static unsigned int seed;
 
@@ -60,49 +62,66 @@ unsigned int rnd() {
 }
 
 char **generator(int n, bool DAG, int word_cnt, unsigned int Seed, bool is_complete) {
+    set<string> dic;
+    dic.clear();
     seed = Seed ^ n ^ word_cnt;
     char **words = (char **) malloc(word_cnt * sizeof(char *));
     words[0] = (char *) malloc(word_cnt * 34);
     char *alloca_space = words[0];
     if (!is_complete) {
         for (int i = 0; i < word_cnt; i++) {
-            int len = (int) ((rnd() % 30) + 3);
-//        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
-            words[i] = alloca_space;
-            alloca_space += len + 1;
-            if (words[i] != nullptr) {
-                words[i][0] = (char) ('a' + rnd() % n);
-                words[i][1] = (char) (i % n + 'a');
-                for (int j = 2; j < len; j++) words[i][j] = (char) (rnd() % n + 'a');
-                if (DAG && words[i][0] >= words[i][len - 1]) {
-                    if (words[i][0] == words[i][len - 1]) {
-                        if (words[i][0] == n - 1 + 'a') words[i][0]--;
-                        else words[i][len - 1]++;
-                    } else std::swap(words[i][0], words[i][len - 1]);
+            while (true) {
+                int len = (int) ((rnd() % 30) + 3);
+                words[i] = alloca_space;
+                alloca_space += len + 1;
+                if (words[i] != nullptr) {
+                    words[i][0] = (char) ('a' + rnd() % n);
+                    words[i][1] = (char) (i % n + 'a');
+                    for (int j = 2; j < len; j++) words[i][j] = (char) (rnd() % n + 'a');
+                    if (DAG && words[i][0] >= words[i][len - 1]) {
+                        if (words[i][0] == words[i][len - 1]) {
+                            if (words[i][0] == n - 1 + 'a') words[i][0]--;
+                            else words[i][len - 1]++;
+                        } else std::swap(words[i][0], words[i][len - 1]);
+                    }
+                    words[i][len] = 0;
                 }
-                words[i][len] = 0;
+                string word = words[i];
+                if (dic.find(word) == dic.end()) {
+                    dic.insert(word);
+                    break;
+                } else {
+                    alloca_space -= len + 1;
+                }
             }
+
         }
     } else {
         int tot = 0;
         while (true) {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    int len = (int) (rnd() % 30) + 3;
-//        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
-                    words[tot] = alloca_space;
-                    alloca_space += len + 1;
-                    if (words[tot] != nullptr) {
-                        // TODO 可能生成重复的单词
-                        words[tot][0] = (char) (i + 'a');
-                        words[tot][len - 1] = (char) (j + 'a');
-                        for (int k = 1; k < len; k++) words[tot][k] = (char) (rnd() % n + 'a');
-                        words[tot][len] = 0;
+                    while (true) {
+                        int len = (int) (rnd() % 30) + 3;
+                        words[tot] = alloca_space;
+                        alloca_space += len + 1;
+                        if (words[tot] != nullptr) {
+                            words[tot][0] = (char) (i + 'a');
+                            words[tot][len - 1] = (char) (j + 'a');
+                            for (int k = 1; k < len; k++) words[tot][k] = (char) (rnd() % n + 'a');
+                            words[tot][len] = 0;
+                        }
+                        string word = words[tot];
+                        if (dic.find(word) == dic.end()) {
+                            if (--word_cnt == 0) {
+                                return words;
+                            }
+                            ++tot;
+                            break;
+                        } else {
+                            alloca_space -= len + 1;
+                        }
                     }
-                    if (--word_cnt == 0) {
-                        return words;
-                    }
-                    ++tot;
                 }
             }
         }
