@@ -66,7 +66,7 @@ char **generator(int n, bool DAG, int word_cnt, unsigned int Seed, bool is_compl
     char *alloca_space = words[0];
     if (!is_complete) {
         for (int i = 0; i < word_cnt; i++) {
-            int len = (int)((rnd() % 30) + 3);
+            int len = (int) ((rnd() % 30) + 3);
 //        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
             words[i] = alloca_space;
             alloca_space += len + 1;
@@ -84,11 +84,11 @@ char **generator(int n, bool DAG, int word_cnt, unsigned int Seed, bool is_compl
             }
         }
     } else {
+        int tot = 0;
         while (true) {
-            int tot = 0;
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    int len = (int)(rnd() % 30) + 3;
+                    int len = (int) (rnd() % 30) + 3;
 //        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
                     words[tot] = alloca_space;
                     alloca_space += len + 1;

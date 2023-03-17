@@ -10,11 +10,11 @@ typedef int (*max_cnt_f)(char *[], int, char *[], void *(*)(size_t));
 typedef int (*max_fut_f)(char *[], int, char *[], char, char, char, bool, void *(*)(size_t));
 
 const int DAG_word_cnt = 10000; // 无环图单词个数上限
-const int Ring_word_cnt = 60; // 有环图单词个数上限
+const int Ring_word_cnt = 50; // 有环图单词个数上限
 const int loop_cnt = 200; // 测试点个数
 const int circle_allow = 1; // 是否允许测试点有环，1允许，0不允许
 typedef std::mt19937 Random_mt19937;
-Random_mt19937 rnd(0);
+Random_mt19937 rnd(596);
 
 int rand_int(int r) {
     return (int) (rnd() % r);
@@ -113,9 +113,6 @@ int main(int argc, char *argv[]) {
             std::set<int> cnt_result_set;
             std::set<int> word_result_set;
             std::set<int> char_result_set;
-            if (is_complete) {
-                node_cnt = std::max(node_cnt, 5);
-            }
 
             char **input = generator(node_cnt, ring == 0 && !coin(10), word_cnt, loop_id + ring * 65536, is_complete);
             char head = '\0', tail = '\0', jail = '\0';
