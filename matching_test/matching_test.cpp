@@ -92,6 +92,7 @@ int main(int argc, char *argv[]) {
         // NO RING TEST
         for (int ring = 0; ring <= circle_allow; ring++) {
             int word_cnt;
+            int node_cnt = rand_int(24) + 3;
             if (ring == 0) {
                 word_cnt = rand_int(DAG_word_cnt);
             } else {
@@ -109,7 +110,7 @@ int main(int argc, char *argv[]) {
             std::set<int> word_result_set;
             std::set<int> char_result_set;
 
-            char **input = generator(26, ring == 0 && coin(10), word_cnt, loop_id + ring * 65536);
+            char **input = generator(node_cnt, ring == 0 && !coin(10), word_cnt, loop_id + ring * 65536, false);
             char head = '\0', tail = '\0', jail = '\0';
             if (coin(2)) {
                 head = rand_char();

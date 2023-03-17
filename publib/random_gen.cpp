@@ -59,28 +59,53 @@ unsigned int rnd() {
     return seed;
 }
 
-char **generator(int n, bool DAG, int word_cnt, unsigned int Seed) {
+char **generator(int n, bool DAG, int word_cnt, unsigned int Seed, bool is_complete) {
     seed = Seed ^ n ^ word_cnt;
     char **words = (char **) malloc(word_cnt * sizeof(char *));
     words[0] = (char *) malloc(word_cnt * 34);
     char *alloca_space = words[0];
-    for (int i = 0; i < word_cnt; i++) {
-        int len = rnd() % 30 + 3;
+    if (!is_complete) {
+        for (int i = 0; i < word_cnt; i++) {
+            int len = rnd() % 30 + 3;
 //        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
-        words[i] = alloca_space;
-        alloca_space += len + 1;
-        if (words[i] != nullptr) {
-            words[i][0] = rnd() % n + 'a';
-            words[i][1] = (char) (i % n + 'a');
-            for (int j = 2; j < len; j++) words[i][j] = (char) (rnd() % n + 'a');
-            if (DAG && words[i][0] >= words[i][len - 1]) {
-                if (words[i][0] == words[i][len - 1]) {
-                    if (words[i][0] == n - 1 + 'a') words[i][0]--;
-                    else words[i][len - 1]++;
-                } else std::swap(words[i][0], words[i][len - 1]);
+            words[i] = alloca_space;
+            alloca_space += len + 1;
+            if (words[i] != nullptr) {
+                words[i][0] = rnd() % n + 'a';
+                words[i][1] = (char) (i % n + 'a');
+                for (int j = 2; j < len; j++) words[i][j] = (char) (rnd() % n + 'a');
+                if (DAG && words[i][0] >= words[i][len - 1]) {
+                    if (words[i][0] == words[i][len - 1]) {
+                        if (words[i][0] == n - 1 + 'a') words[i][0]--;
+                        else words[i][len - 1]++;
+                    } else std::swap(words[i][0], words[i][len - 1]);
+                }
+                words[i][len] = 0;
             }
-            words[i][len] = 0;
         }
+    } else {
+        while (true) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    int len = rnd() % 30 + 3;
+//        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
+                    words[i] = alloca_space;
+                    alloca_space += len + 1;
+                    if (words[i] != nullptr) {
+                        // TODO 可能生成重复的单词
+                        words[i][0] = (char) (i + 'a');
+                        words[i][len - 1] = (char) (j + 'a');
+                        for (int k = 1; k < len; k++) words[i][k] = (char) (rnd() % n + 'a');
+                        words[i][len] = 0;
+                    }
+                    if (--word_cnt == 0) {
+                        return words;
+                    }
+                }
+            }
+        }
+
     }
+
     return words;
 }

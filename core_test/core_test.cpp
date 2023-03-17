@@ -237,7 +237,7 @@ TEST(gen_chain_char, tail) {
 TEST(gen_chain_word, random_no_loop) {
     for (int i = 1; i < 20; i += 3) {
         for (int n = 2; n <= 26; n += 2) {
-            char **input = generator(n, true, i, n * i);
+            char **input = generator(n, true, i, n * i, false);
             int std_ans = dp(input, i, 0, 0, false);
             std::string input_str[i];
             for (int id = 0; id < i; id++) {
@@ -253,7 +253,7 @@ TEST(gen_chain_word, random_no_loop) {
 TEST(gen_chain_word, random_loop) {
     for (int i = 1; i < 20; i += 3) {
         for (int n = 2; n <= 26; n += 2) {
-            char **input = generator(n, false, i, n * i);
+            char **input = generator(n, false, i, n * i, false);
             int std_ans = dp(input, i, 0, 0, false);
             std::string input_str[i];
             for (int id = 0; id < i; id++) {
