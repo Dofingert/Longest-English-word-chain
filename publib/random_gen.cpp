@@ -85,22 +85,24 @@ char **generator(int n, bool DAG, int word_cnt, unsigned int Seed, bool is_compl
         }
     } else {
         while (true) {
+            int tot = 0;
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     int len = rnd() % 30 + 3;
 //        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
-                    words[i] = alloca_space;
+                    words[tot] = alloca_space;
                     alloca_space += len + 1;
-                    if (words[i] != nullptr) {
+                    if (words[tot] != nullptr) {
                         // TODO 可能生成重复的单词
-                        words[i][0] = (char) (i + 'a');
-                        words[i][len - 1] = (char) (j + 'a');
-                        for (int k = 1; k < len; k++) words[i][k] = (char) (rnd() % n + 'a');
-                        words[i][len] = 0;
+                        words[tot][0] = (char) (i + 'a');
+                        words[tot][len - 1] = (char) (j + 'a');
+                        for (int k = 1; k < len; k++) words[tot][k] = (char) (rnd() % n + 'a');
+                        words[tot][len] = 0;
                     }
                     if (--word_cnt == 0) {
                         return words;
                     }
+                    ++tot;
                 }
             }
         }

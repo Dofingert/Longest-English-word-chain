@@ -101,6 +101,7 @@ int main(int argc, char *argv[]) {
             bool is_complete = false;
             if (ring == 1 && coin(10)) {
                 is_complete = true;
+                node_cnt = rand_int(7) + 3;
             }
             // 0 无环，1 有环
             int cnt_result_table[argc - 1];
