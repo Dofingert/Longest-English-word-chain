@@ -3,6 +3,7 @@
 //
 #include <bits/stdc++.h>
 #include "../include/core.h"
+#include <phmap.h>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -12,20 +13,21 @@
 #include <map>
 
 using namespace std;
-typedef __int128 LLL;
+typedef __int128 state_t;
 
 const int MAX_ANS_CNT = 20000;
 const int INF = 0x3f3f3f3f;
 const int MAX_N = 26;
 
 template<>
-struct std::hash<pair<LLL, int>> {
-    size_t operator()(const pair<LLL, int> &k) const {
-        return hash<LLL>()(k.first) ^ hash<int>()(k.second);
+struct std::hash<pair<state_t, int>> {
+    size_t operator()(const pair<state_t, int> &k) const {
+        return hash<state_t>()(k.first) ^ hash<int>()(k.second);
     }
 };
 
 struct ComputeUnit {
+
     vector<string> word_list;
 
     vector<string> ans;
@@ -254,80 +256,80 @@ struct ComputeUnit {
         return len;
     }
 
-    LLL int128_base[128];
-    unordered_map<pair<LLL, int>, pair<int, int> > mp; // tuple 中的两个 ll 组成 int128 表示 State， int 表示 i； pair<int, int> 表示 ans, from
-    LLL global_state; // global_state 维护当前 dfs 到的 State，模拟 int128
+    mutex mp_lock;
+//    unordered_map
+    phmap::flat_hash_map
+            <pair<state_t, int>, pair<int, int> > mp; // tuple 中的两个 ll 组成 int128 表示 State， int 表示 i； pair<int, int> 表示 ans, from
+
     vector<pair<int, int> > edge_w[26][26]; // edge_w[i][j] 中存起点为 i，终点为 j 的边的 pair<边权，边id>
     vector<int> Ver[26]; // Ver[i] === ver[i]
-    int w_used[26][26]; // 维护 edge_w[i][j] 中当前已经在 State 中的边数
     int global_tail = 0;
+    struct thread_context_t {
+        state_t global_state{0}; // global_state 维护当前 dfs 到的 State，模拟 int128
+        int w_used[26][26]{0}; // 维护 edge_w[i][j] 中当前已经在 State 中的边数
+    };
 
-    void init_int128_base() {
-        int128_base[0] = 1;
-        for (int i = 1; i < 128; i++) {
-            int128_base[i] = int128_base[i - 1] << 1;
-        }
+    static void modify_global_state(state_t &global_state, int i) {
+        global_state |= (((state_t) 1) << i);
     }
 
-    void modify_global_state(int i) {
-        global_state |= int128_base[i];
-    }
-
-    void dfs_state(int i) {
+    void dfs_state(thread_context_t *thread_context, int i) {
         // 记忆化搜索
-        if (mp.find(make_pair(global_state, i)) != mp.end()) {
-            return;
+        {
+            auto const mem_stat = mp.find(make_pair(thread_context->global_state, i));
+            if (mem_stat != mp.end()) {
+                return;
+            }
         }
         int ret = (global_tail == -1 || i == global_tail) ? 0 : -INF;
         int id = -1;
-        LLL global_state_bk = global_state;
-        if (w_used[i][i] < edge_w[i][i].size()) {
+        state_t global_state_bk = thread_context->global_state;
+        if (thread_context->w_used[i][i] < edge_w[i][i].size()) {
             // 先选自环
-            modify_global_state(edge_w[i][i][w_used[i][i]].second);
-            w_used[i][i]++;
-            dfs_state(i);
-            ret = mp[make_pair(global_state, i)].first + edge_w[i][i][w_used[i][i] - 1ll].first;
+            modify_global_state(thread_context->global_state, edge_w[i][i][thread_context->w_used[i][i]].second);
+            thread_context->w_used[i][i]++;
+            dfs_state(thread_context, i);
+            auto const mem_stat = mp.find(make_pair(thread_context->global_state, i));
+            ret = mem_stat->second.first +
+                  edge_w[i][i][thread_context->w_used[i][i] - 1ll].first;
             id = i;
             // 还原现场
-            global_state = global_state_bk;
-            w_used[i][i]--;
+            thread_context->global_state = global_state_bk;
+            thread_context->w_used[i][i]--;
         } else {
             // 此时i点的自环已经全部选完，开始走i点的出边继续扩展状态
             for (int j: Ver[i]) {
-                if (w_used[i][j] < edge_w[i][j].size()) {
+                if (thread_context->w_used[i][j] < edge_w[i][j].size()) {
                     if (scc_col[i] == scc_col[j]) {
                         // 若在同一个强连通分量中
-                        modify_global_state(edge_w[i][j][w_used[i][j]].second);
+                        modify_global_state(thread_context->global_state,
+                                            edge_w[i][j][thread_context->w_used[i][j]].second);
                     } else {
                         // 若进入一个新的强连通分量，则清零State
-                        global_state = 0;
+                        thread_context->global_state = 0;
                     }
-                    w_used[i][j]++;
-                    dfs_state(j); // 由于 dfs_max结束后一定会把val还原成val_bk，因此dfs_max结束后val还是0
+                    thread_context->w_used[i][j]++;
+                    dfs_state(thread_context, j); // 由于 dfs_max结束后一定会把val还原成val_bk，因此dfs_max结束后val还是0
+                    auto const mem_stat = mp.find(make_pair(thread_context->global_state, j));
                     int sum =
-                            mp[make_pair(global_state, j)].first + edge_w[i][j][w_used[i][j] - 1ll].first; // 为什么减去1ll？
+                            mem_stat->second.first +
+                            edge_w[i][j][thread_context->w_used[i][j] - 1ll].first; // 为什么减去1ll？
                     if (ret < sum) {
                         ret = sum;
                         id = j;
                     }
                     // 还原现场
-                    global_state = global_state_bk;
-                    w_used[i][j]--;
+                    thread_context->global_state = global_state_bk;
+                    thread_context->w_used[i][j]--;
                 }
             }
         }
-        mp[make_pair(global_state, i)] = {ret, id};
+//        unique_lock<mutex> local_mp_lock(mp_lock);
+        mp[make_pair(thread_context->global_state, i)] = {ret, id};
+//        local_mp_lock.unlock();
     }
 
     int get_longest_chain(char *result[], char head, char tail, bool weighted, void *out_malloc(size_t)) {
-        // 初始化
-        init_int128_base();
-        global_state = 0;
-        for (int i = 0; i < MAX_N; i++) {
-            for (int j = 0; j < MAX_N; j++) {
-                w_used[i][j] = 0;
-            }
-        }
         for (int i = 0; i < word_list.size(); i++) {
             edge_w[word_list[i][0] - 'a'][word_list[i].back() - 'a'].emplace_back(
                     weighted ? (int) word_list[i].length() : 1, i);
@@ -344,25 +346,30 @@ struct ComputeUnit {
         }
         // 记忆化搜索
         global_tail = tail ? tail - 'a' : -1;
+//#pragma omp parallel for
         for (int i = 0; i < 26; i++) {
             if (!head || head - 'a' == i) {
+                auto thread_context = new thread_context_t;
                 // 由于记忆化搜索，因此遍历的起始顺序不再重要
-                dfs_state(i);
+                dfs_state(thread_context, i);
+                delete thread_context;
             }
         }
+        auto local_context = new thread_context_t;
         // 枚举起始边，枚举答案
         int x = -1, sum = -INF;
         for (int i = 0; i < word_list.size(); i++) {
             if (!head || head == word_list[i][0]) {
                 int u = word_list[i][0] - 'a', v = word_list[i].back() - 'a';
-                global_state = 0;
+                local_context->global_state = 0;
                 if (scc_col[u] == scc_col[v]) {
-                    modify_global_state(i);
+                    modify_global_state(local_context->global_state, i);
                 }
-                if (mp[make_pair(global_state, v)].first <= 0) {
+                if (mp[make_pair(local_context->global_state, v)].first <= 0) {
                     continue;
                 }
-                int Sum = mp[make_pair(global_state, v)].first + (weighted ? (int) word_list[i].length() : 1);
+                int Sum = mp[make_pair(local_context->global_state, v)].first +
+                          (weighted ? (int) word_list[i].length() : 1);
                 if (sum < Sum) {
                     sum = Sum;
                     x = i;
@@ -370,29 +377,30 @@ struct ComputeUnit {
             }
         }
         // 回溯答案
-        global_state = 0;
+        local_context->global_state = 0;
         if (x != -1) {
             ans.push_back(word_list[x]);
             if (scc_col[word_list[x][0] - 'a'] == scc_col[word_list[x].back() - 'a']) {
-                modify_global_state(x);
-                w_used[word_list[x][0] - 'a'][word_list[x].back() - 'a']++;
+                modify_global_state(local_context->global_state, x);
+                local_context->w_used[word_list[x][0] - 'a'][word_list[x].back() - 'a']++;
             }
             x = word_list[x].back() - 'a';
             while (true) {
-                int j = mp[make_pair(global_state, x)].second;
+                int j = mp[make_pair(local_context->global_state, x)].second;
                 if (j == -1) {
                     break;
                 }
-                ans.push_back(word_list[edge_w[x][j][w_used[x][j]].second]);
+                ans.push_back(word_list[edge_w[x][j][local_context->w_used[x][j]].second]);
                 if (scc_col[x] == scc_col[j]) {
-                    modify_global_state(edge_w[x][j][w_used[x][j]].second);
+                    modify_global_state(local_context->global_state, edge_w[x][j][local_context->w_used[x][j]].second);
                 } else {
-                    global_state = 0;
+                    local_context->global_state = 0;
                 }
-                w_used[x][j]++;
+                local_context->w_used[x][j]++;
                 x = j;
             }
         }
+        delete local_context;
         int len = (int) ans.size();
         write_ans_to_mem(result, out_malloc);
         return len;
@@ -402,54 +410,70 @@ struct ComputeUnit {
 
 int gen_chains_all(char *words[], int len, char *result[], void *out_malloc(size_t)) {
     auto *context = new ComputeUnit;
-    context->word_preprocessing(words, len, 0);
-    context->get_SCC();
-    context->check_loop();
-    int ret = context->get_all_chains(result, out_malloc);
-    delete context;
-    return ret;
+    try {
+        context->word_preprocessing(words, len, 0);
+        context->get_SCC();
+        context->check_loop();
+        int ret = context->get_all_chains(result, out_malloc);
+        delete context;
+        return ret;
+    } catch (exception &e) {
+        delete context;
+        throw logic_error(e.what());
+    }
 }
 
 int gen_chain_word(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop,
                    void *out_malloc(size_t)) {
     auto *context = new ComputeUnit;
-    int ret = 0;
-    if (!enable_loop) {
-        context->word_preprocessing(words, len, 0);
-        context->get_SCC();
-        context->check_loop();
+    try {
+        int ret;
+        if (!enable_loop) {
+            context->word_preprocessing(words, len, 0);
+            context->get_SCC();
+            context->check_loop();
+            delete context;
+            context = new ComputeUnit;
+            context->word_preprocessing(words, len, jail);
+            context->get_SCC();
+            ret = context->get_longest_chain_on_DAG(result, head, tail, false, out_malloc);
+        } else {
+            context->word_preprocessing(words, len, jail);
+            context->get_SCC();
+            ret = context->get_longest_chain(result, head, tail, false, out_malloc);
+        }
         delete context;
-        context = new ComputeUnit;
-        context->word_preprocessing(words, len, jail);
-        context->get_SCC();
-        ret = context->get_longest_chain_on_DAG(result, head, tail, false, out_malloc);
-    } else {
-        context->word_preprocessing(words, len, jail);
-        context->get_SCC();
-        ret = context->get_longest_chain(result, head, tail, false, out_malloc);
+        return ret;
+    } catch (exception &e) {
+        delete context;
+        throw logic_error(e.what());
     }
-    delete context;
-    return ret;
 }
 
 int gen_chain_char(char *words[], int len, char *result[], char head, char tail, char jail, bool enable_loop,
                    void *out_malloc(size_t)) {
     auto *context = new ComputeUnit;
-    int ret;
-    if (!enable_loop) {
-        context->word_preprocessing(words, len, 0);
-        context->get_SCC();
-        context->check_loop();
+    try {
+        int ret;
+        if (!enable_loop) {
+            context->word_preprocessing(words, len, 0);
+            context->get_SCC();
+            context->check_loop();
+            delete context;
+            context = new ComputeUnit;
+            context->word_preprocessing(words, len, jail);
+            context->get_SCC();
+            ret = context->get_longest_chain_on_DAG(result, head, tail, true, out_malloc);
+            delete context;
+        } else {
+            context->word_preprocessing(words, len, jail);
+            context->get_SCC();
+            ret = context->get_longest_chain(result, head, tail, true, out_malloc);
+            delete context;
+        }
+        return ret;
+    } catch (exception &e) {
         delete context;
-        context = new ComputeUnit;
-        context->word_preprocessing(words, len, jail);
-        context->get_SCC();
-        ret = context->get_longest_chain_on_DAG(result, head, tail, true, out_malloc);
-    } else {
-        context->word_preprocessing(words, len, jail);
-        context->get_SCC();
-        ret = context->get_longest_chain(result, head, tail, true, out_malloc);
+        throw logic_error(e.what());
     }
-    delete context;
-    return ret;
 }

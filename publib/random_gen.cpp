@@ -62,7 +62,7 @@ unsigned int rnd() {
 char **generator(int n, bool DAG, int word_cnt, unsigned int Seed) {
     seed = Seed ^ n ^ word_cnt;
     char **words = (char **) malloc(word_cnt * sizeof(char *));
-    words[0] = (char *) malloc(word_cnt * 33);
+    words[0] = (char *) malloc(word_cnt * 34);
     char *alloca_space = words[0];
     for (int i = 0; i < word_cnt; i++) {
         int len = rnd() % 30 + 3;

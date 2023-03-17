@@ -1,5 +1,5 @@
 std::string words_str[] = {"aa", "ab", "bc"};
-int std_cnt_ans = 0; // > 20000
+int std_cnt_ans = 3; // > 20000
 int std_word_ans = 0;
 int std_char_ans = 0;
 char head = 'b';

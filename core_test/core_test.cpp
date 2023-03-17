@@ -244,6 +244,8 @@ TEST(gen_chain_word, random_no_loop) {
                 input_str[id] = std::string(input[id]);
             }
             std_check_gen_max(input_str, i, gen_chain_word, 0, 0, 0, 0, std_ans);
+            free(input[0]);
+            free(input);
         }
     }
 }
@@ -258,6 +260,8 @@ TEST(gen_chain_word, random_loop) {
                 input_str[id] = std::string(input[id]);
             }
             std_check_gen_max(input_str, i, gen_chain_word, 0, 0, 0, true, std_ans);
+            free(input[0]);
+            free(input);
         }
     }
 }

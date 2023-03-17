@@ -8,9 +8,10 @@ set(CMAKE_CXX_STANDARD 14)
 # For Google test
 set(GOOGLETEST_VERSION 1.13.0)
 add_subdirectory(./googletest)
-include_directories(./googletest/include ./include)
+include_directories(./googletest/include)
 link_directories(./googletest)
 
+include_directories(./include ./parallel_hashmap)
 add_subdirectory(core)
 #add_subdirectory(core_other)
 add_subdirectory(cli)
