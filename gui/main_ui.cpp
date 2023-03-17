@@ -92,7 +92,7 @@ void pending_job_t::compute_load() {
                                  malloc);
         }
         // generate result string
-        char split_char = (mode == 0) ? '\n' : ' ';
+        char split_char = (mode == 0) ? '\n' : '\n';
         for (int i = 0; i < ret; i++) {
             result_str << result[i];
             if (i != ret - 1) {
