@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
                 if (file) {
                     throw std::logic_error("Error: Only support one input file!");
                 } else {
-                    file = fopen(argv[i], "r");
+                    file = fopen(argv[i], "rb");
                     if (file == nullptr) {
                         throw std::logic_error("Error: Cannot find input file: \"" + std::string(argv[i]) + "\"!");
                     }
@@ -157,7 +157,7 @@ int main(int argc, char *argv[]) {
             throw std::logic_error("Error: Input filesize " + std::to_string(file_size / 1024) +
                                    "kb is too large. Support up to " + std::to_string(MAX_FILE_SIZE / 1024) + "kb!");
         }
-        input_buffer = (char *) (malloc(file_size + 1));
+        input_buffer = (char *) (malloc(file_size + 4096));
         fseek(file, 0, SEEK_SET);
         fread(input_buffer, 1, file_size, file);
         fclose(file);
