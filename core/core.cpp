@@ -35,10 +35,10 @@ struct ComputeUnit {
 
     vector<int> ver[MAX_N + 5];
     vector<int> scc[MAX_N + 5];
-    int my_stack[MAX_N + 5], top = 0;
-    bool ins[MAX_N + 5], visit[MAX_N + 5];
-    int dfn[MAX_N + 5], low[MAX_N + 5], cnt = 0;
-    int scc_col[MAX_N + 5], scc_tot = 0;
+    int my_stack[MAX_N + 5]{}, top = 0;
+    bool ins[MAX_N + 5]{}, visit[MAX_N + 5]{};
+    int dfn[MAX_N + 5]{}, low[MAX_N + 5]{}, cnt = 0;
+    int scc_col[MAX_N + 5]{}, scc_tot = 0;
 
 
     vector<int> dfs_stack;
@@ -178,13 +178,13 @@ struct ComputeUnit {
 
 
     int get_longest_chain_on_DAG(char *result[], char head, char tail, bool weighted, void *out_malloc(size_t)) {
-        // status 记录 dp 值，topo 记录拓扑序，from 记录 status 是从之后哪个单词转移来的，self_from 记录 status 是否是从自环转移来的
-        int topo[MAX_N + 5] = {}, f[MAX_N + 5] = {}, from[MAX_N + 5] = {}, self_from[MAX_N + 5] = {};
+        // status 记录 dp 值，topology 记录拓扑序，from 记录 status 是从之后哪个单词转移来的，self_from 记录 status 是否是从自环转移来的
+        int topology[MAX_N + 5] = {}, f[MAX_N + 5] = {}, from[MAX_N + 5] = {}, self_from[MAX_N + 5] = {};
         for (int i = 0; i < MAX_N; i++) {
-            topo[scc_col[i] - 1] = i; // topological 序
+            topology[scc_col[i] - 1] = i; // topological 序
         }
         for (int i = 0; i < MAX_N; i++) {
-            int x = topo[i];
+            int x = topology[i];
             f[x] = (!tail || tail - 'a' == x) ? 0 : -INF;
             from[x] = self_from[x] = -1;
             for (int j: ver[x]) {
@@ -432,11 +432,15 @@ int gen_chain_word(char *words[], int len, char *result[], char head, char tail,
             context->word_preprocessing(words, len, 0);
             context->get_SCC();
             context->check_loop();
-            delete context;
-            context = new ComputeUnit;
-            context->word_preprocessing(words, len, jail);
-            context->get_SCC();
-            ret = context->get_longest_chain_on_DAG(result, head, tail, false, out_malloc);
+            if (jail) {
+                delete context;
+                context = new ComputeUnit;
+                context->word_preprocessing(words, len, jail);
+                context->get_SCC();
+                ret = context->get_longest_chain_on_DAG(result, head, tail, false, out_malloc);
+            } else {
+                ret = context->get_longest_chain_on_DAG(result, head, tail, false, out_malloc);
+            }
         } else {
             context->word_preprocessing(words, len, jail);
             context->get_SCC();
@@ -459,18 +463,21 @@ int gen_chain_char(char *words[], int len, char *result[], char head, char tail,
             context->word_preprocessing(words, len, 0);
             context->get_SCC();
             context->check_loop();
-            delete context;
-            context = new ComputeUnit;
-            context->word_preprocessing(words, len, jail);
-            context->get_SCC();
-            ret = context->get_longest_chain_on_DAG(result, head, tail, true, out_malloc);
-            delete context;
+            if (jail) {
+                delete context;
+                context = new ComputeUnit;
+                context->word_preprocessing(words, len, jail);
+                context->get_SCC();
+                ret = context->get_longest_chain_on_DAG(result, head, tail, true, out_malloc);
+            } else {
+                ret = context->get_longest_chain_on_DAG(result, head, tail, true, out_malloc);
+            }
         } else {
             context->word_preprocessing(words, len, jail);
             context->get_SCC();
             ret = context->get_longest_chain(result, head, tail, true, out_malloc);
-            delete context;
         }
+        delete context;
         return ret;
     } catch (exception &e) {
         delete context;

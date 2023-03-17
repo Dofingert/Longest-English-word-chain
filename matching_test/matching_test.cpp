@@ -14,14 +14,14 @@ const int Ring_word_cnt = 60; // 有环图单词个数上限
 const int loop_cnt = 200; // 测试点个数
 const int circle_allow = 1; // 是否允许测试点有环，1允许，0不允许
 typedef std::mt19937 Random_mt19937;
-Random_mt19937 rnd(std::chrono::system_clock::now().time_since_epoch().count());
+Random_mt19937 rnd(0);
 
 int rand_int(int r) {
-    return rnd() % r;
+    return (int) (rnd() % r);
 }
 
 char rand_char() {
-    return rand_int(26) + 'a';
+    return (char) (rand_int(26) + 'a');
 }
 
 bool coin(int k) {
@@ -109,11 +109,13 @@ int main(int argc, char *argv[]) {
             int word_result_table[argc - 1];
             double word_time[argc - 1];
             int char_result_word_table[argc - 1];
-            int char_result_char_table[argc - 1];
             double char_time[argc - 1];
             std::set<int> cnt_result_set;
             std::set<int> word_result_set;
             std::set<int> char_result_set;
+            if (is_complete) {
+                node_cnt = std::max(node_cnt, 5);
+            }
 
             char **input = generator(node_cnt, ring == 0 && !coin(10), word_cnt, loop_id + ring * 65536, is_complete);
             char head = '\0', tail = '\0', jail = '\0';
@@ -132,7 +134,7 @@ int main(int argc, char *argv[]) {
 
                 word_set_t dictionary = build_dictionary(word_cnt, input);
                 char **result = (char **) malloc(32768LL * sizeof(char *));
-                int ret_word_cnt = -1;
+                int ret_word_cnt;
                 try {
                     QueryPerformanceCounter(&time_1);
                     ret_word_cnt = cnt_func[i](input, word_cnt, result, malloc);
@@ -165,7 +167,7 @@ int main(int argc, char *argv[]) {
                     ret_word_cnt = max_word_func[i](input, word_cnt, result, head, tail, jail, ring, malloc);
                     QueryPerformanceCounter(&time_2);
                     word_set_t appear;
-                    int err = 0;
+                    int err;
                     std::stringstream result_str;
                     for (int line = 0; line < ret_word_cnt; line++) {
                         result_str << result[line];
@@ -233,13 +235,15 @@ int main(int argc, char *argv[]) {
 
             if (cnt_result_set.size() == 1 && cnt_result_set.find(-2) == cnt_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head
-                          << " tail: " << tail << " jail: " << jail << " " << " is_complete: " << is_complete << " word_cnt: " << word_cnt << " node_cnt: " << node_cnt << " "
+                          << " tail: " << tail << " jail: " << jail << " " << " is_complete: " << is_complete
+                          << " word_cnt: " << word_cnt << " node_cnt: " << node_cnt << " "
                           << "excp: " << ((cnt_result_table[0] == -1) ? "true " : "false ")
                           << "cnt_result_set match in all point!" << std::endl;
                 print_all_time(cnt_time, argc - 1);
             } else {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head
-                          << " tail: " << tail << " jail: " << jail << " " << " is_complete: " << is_complete << " word_cnt: " << word_cnt << " node_cnt: " << node_cnt << " "
+                          << " tail: " << tail << " jail: " << jail << " " << " is_complete: " << is_complete
+                          << " word_cnt: " << word_cnt << " node_cnt: " << node_cnt << " "
                           << "cnt_result_set mismatch!" << std::endl;
                 print_all(cnt_result_table, argc - 1);
                 FILE *fp = fopen("err_data.txt", "w");
@@ -251,13 +255,15 @@ int main(int argc, char *argv[]) {
             }
             if (word_result_set.size() == 1 && word_result_set.find(-2) == word_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head
-                          << " tail: " << tail << " jail: " << jail << " is_complete: " << is_complete << " word_cnt: " << word_cnt << " node_cnt: " << node_cnt << " "
+                          << " tail: " << tail << " jail: " << jail << " is_complete: " << is_complete << " word_cnt: "
+                          << word_cnt << " node_cnt: " << node_cnt << " "
                           << "excp: " << ((word_result_table[0] == -1) ? "true " : "false ")
                           << "word_result_set match in all point!" << std::endl;
                 print_all_time(word_time, argc - 1);
             } else {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head
-                          << " tail: " << tail << " jail: " << jail << " " << " is_complete: " << is_complete << " word_cnt: " << word_cnt << " node_cnt: " << node_cnt << " "
+                          << " tail: " << tail << " jail: " << jail << " " << " is_complete: " << is_complete
+                          << " word_cnt: " << word_cnt << " node_cnt: " << node_cnt << " "
                           << "word_result_set mismatch!" << std::endl;
                 print_all(word_result_table, argc - 1);
                 FILE *fp = fopen("err_data.txt", "w");
@@ -269,13 +275,15 @@ int main(int argc, char *argv[]) {
             }
             if (char_result_set.size() == 1 && char_result_set.find(-2) == char_result_set.end()) {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head
-                          << " tail: " << tail << " jail: " << jail << " " << " is_complete: " << is_complete << " word_cnt: " << word_cnt << " node_cnt: " << node_cnt << " "
+                          << " tail: " << tail << " jail: " << jail << " " << " is_complete: " << is_complete
+                          << " word_cnt: " << word_cnt << " node_cnt: " << node_cnt << " "
                           << "excp: " << ((char_result_word_table[0] == -1) ? "true " : "false ")
                           << "char_result_set match in all point!" << std::endl;
                 print_all_time(char_time, argc - 1);
             } else {
                 std::cout << "loop: " << loop_id << " ring: " << ((ring == 1) ? "true " : "false ") << " head: " << head
-                          << " tail: " << tail << " jail: " << jail << " " << " is_complete: " << is_complete << " word_cnt: " << word_cnt << " node_cnt: " << node_cnt << " "
+                          << " tail: " << tail << " jail: " << jail << " " << " is_complete: " << is_complete
+                          << " word_cnt: " << word_cnt << " node_cnt: " << node_cnt << " "
                           << "char_result_set mismatch!" << std::endl;
                 print_all(char_result_word_table, argc - 1);
                 FILE *fp = fopen("err_data.txt", "w");

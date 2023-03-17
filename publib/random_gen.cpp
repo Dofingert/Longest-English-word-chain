@@ -1,11 +1,11 @@
 //
 // Created by 10901 on 2023/3/12.
 //
-#include <stdlib.h>
+#include <cstdlib>
 #include <algorithm>
 #include <cstring>
 
-static int seed;
+static unsigned int seed;
 
 int status[1 << 20][20];
 
@@ -66,12 +66,12 @@ char **generator(int n, bool DAG, int word_cnt, unsigned int Seed, bool is_compl
     char *alloca_space = words[0];
     if (!is_complete) {
         for (int i = 0; i < word_cnt; i++) {
-            int len = rnd() % 30 + 3;
+            int len = (int)((rnd() % 30) + 3);
 //        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
             words[i] = alloca_space;
             alloca_space += len + 1;
             if (words[i] != nullptr) {
-                words[i][0] = rnd() % n + 'a';
+                words[i][0] = (char) ('a' + rnd() % n);
                 words[i][1] = (char) (i % n + 'a');
                 for (int j = 2; j < len; j++) words[i][j] = (char) (rnd() % n + 'a');
                 if (DAG && words[i][0] >= words[i][len - 1]) {
@@ -88,7 +88,7 @@ char **generator(int n, bool DAG, int word_cnt, unsigned int Seed, bool is_compl
             int tot = 0;
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    int len = rnd() % 30 + 3;
+                    int len = (int)(rnd() % 30) + 3;
 //        words[i] = (char *) malloc((len + 1ll) * sizeof(char));
                     words[tot] = alloca_space;
                     alloca_space += len + 1;

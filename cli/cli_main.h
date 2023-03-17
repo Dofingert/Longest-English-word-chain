@@ -16,7 +16,7 @@ struct cli_exception_s : public std::exception {
         err_repeated_mode
     } err_type;
 
-    cli_exception_s(exception_type_e type) {
+    explicit cli_exception_s(exception_type_e type) {
         err_type = type;
     }
 
