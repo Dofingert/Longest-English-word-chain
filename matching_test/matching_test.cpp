@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
 
                 try {
                     QueryPerformanceCounter(&time_1);
-                    ret_word_cnt = max_word_func[i](input, word_cnt, result, '\0', '\0', '\0', ring, malloc);
+                    ret_word_cnt = max_word_func[i](input, word_cnt, result, head, tail, jail, ring, malloc);
                     QueryPerformanceCounter(&time_2);
                     word_set_t appear;
                     int err = 0;
@@ -188,7 +188,7 @@ int main(int argc, char *argv[]) {
 
                 try {
                     QueryPerformanceCounter(&time_1);
-                    ret_word_cnt = max_char_func[i](input, word_cnt, result, '\0', '\0', '\0', ring, malloc);
+                    ret_word_cnt = max_char_func[i](input, word_cnt, result, head, tail, jail, ring, malloc);
                     QueryPerformanceCounter(&time_2);
                     word_set_t appear;
                     int err;
