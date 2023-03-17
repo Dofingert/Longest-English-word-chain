@@ -214,7 +214,7 @@ struct ComputeUnit {
                 int u = word_list[i][0] - 'a', v = word_list[i].back() - 'a';
                 if (u == v) {
                     // 对于自环，需要判断 status[u] 是否只有自环，因为单词链长度大于1，单独一个自环无法构成单词链
-                    if (f[u] == (weighted ? (int) word_list[i].length() : 1)) {
+                    if (f[u] <= 0 || f[u] == (weighted ? (int) word_list[i].length() : 1)) {
                         continue;
                     }
                     if (max_sum < f[u]) {
