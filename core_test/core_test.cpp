@@ -204,6 +204,20 @@ TEST(gen_chain_char, excp_loop) {
 #include "gen_chain_char_default.txt"
 }
 
+TEST(gen_chains_all, excp_too_long_129) {
+#include"test_point/excp_too_long_129.txt"
+#include "gen_chains_default.txt"
+}
+
+TEST(gen_chain_word, excp_too_long_129) {
+#include"test_point/excp_too_long_129.txt"
+#include "gen_chain_word_default.txt"
+}
+
+TEST(gen_chain_char, excp_too_long_129) {
+#include"test_point/excp_too_long_129.txt"
+#include "gen_chain_char_default.txt"
+}
 TEST(gen_chains_all, head) {
 #include"test_point/head_sel.txt"
 #include "gen_chains_default.txt"

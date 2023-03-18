@@ -1,0 +1,21 @@
+std::string words_str[] = {
+"aa","ba","ca","da","ea","fa","ga","ha","ia","ja","ka","la",
+"ab","bb","cb","db","eb","fb","gb","hb","ib","jb","kb","lb",
+"ac","bc","cc","dc","ec","fc","gc","hc","ic","jc","kc","lc",
+"ad","bd","cd","dd","ed","fd","gd","hd","id","jd","kd","ld",
+"ae","be","ce","de","ee","fe","ge","he","ie","je","ke","le",
+"af","bf","cf","df","ef","ff","gf","hf","if","jf","kf","lf",
+"ag","bg","cg","dg","eg","fg","gg","hg","ig","jg","kg","lg",
+"ah","bh","ch","dh","eh","fh","gh","hh","ih","jh","kh","lh",
+"ai","bi","ci","di","ei","fi","gi","hi","ii","ji","ki","li",
+"aj","bj","cj","dj","ej","fj","gj","hj","ij","jj","kj","lj",
+"ak","bk","ck","dk","ek","fk","gk","hk","ik","jk","kk","lk",
+"al","bl","cl","dl","el","fl","gl","hl","il","jl","kl","ll"
+};
+int std_cnt_ans = -1;
+int std_word_ans = -1;
+int std_char_ans = -1;
+char head = '\0';
+char tail = '\0';
+char jail = '\0';
+bool ring = false;
