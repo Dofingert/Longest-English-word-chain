@@ -65,6 +65,10 @@ public slots:
 
     void mode_update(int sel);
 
+    void gui_openfile();
+
+    void gui_savefile();
+
     void gui_compute();
 
     void head_limit();

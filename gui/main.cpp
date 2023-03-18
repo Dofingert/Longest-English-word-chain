@@ -3,6 +3,8 @@
 #include <windows.h>
 #include "main_ui.h"
 
+#pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
+
 typedef int (*max_cnt_f)(char *[], int, char *[], void *(*)(size_t));
 
 typedef int (*max_fut_f)(char *[], int, char *[], char, char, char, bool,

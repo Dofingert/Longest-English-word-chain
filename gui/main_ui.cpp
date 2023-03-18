@@ -17,6 +17,8 @@
 
 #include "xxhash.h"
 #include <QTime>
+#include <QFileDialog>
+#include <QMessageBox>
 
 typedef int (*max_cnt_f)(char *[], int, char *[], void *(*)(size_t));
 
@@ -116,6 +118,63 @@ void pending_job_t::compute_load() {
     emit finish_signal();
 }
 
+void main_ui::gui_openfile() {
+    QString fileName = QFileDialog::getOpenFileName(
+            this, tr("open text file"),
+            "./", tr("Text files(*.txt)"));
+
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    FILE *fp = fopen(fileName.toStdString().c_str(), "rb");
+    if (fp == nullptr) {
+        QMessageBox::warning(this, "警告", "无法打开文件 " + fileName);
+        return;
+    }
+    _fseeki64(fp, 0, SEEK_END);
+    size_t file_size = _ftelli64(fp);
+
+    if (file_size > 512LL * 1024 * 1024) {
+        QMessageBox::warning(this, "警告", "文件过大，不支持打开 512M 以上的文件");
+        return;
+    }
+
+    char *buffer = (char *) (malloc(file_size + 4096));
+    fseek(fp, 0, SEEK_SET);
+    fread(buffer, 1, file_size, fp);
+
+    fclose(fp);
+    buffer[file_size] = '\0';
+    ui->text_input->setPlainText(buffer);
+    free(buffer);
+}
+
+void main_ui::gui_savefile() {
+    QString fileName = QFileDialog::getSaveFileName(
+            this, tr("open text file"),
+            "./", tr("Text files(*.txt)"));
+
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    FILE *fp = fopen(fileName.toStdString().c_str(), "wb");
+    if (fp == nullptr) {
+        QMessageBox::warning(this, "警告", "无法打开文件 " + fileName);
+        return;
+    }
+
+    const QString result = ui->text_output->toPlainText();
+
+    char *buffer = (char *) (malloc(result.size() + 4096));
+    buffer[result.size()] = '\0';
+    fwrite(buffer, 1, result.size(), fp);
+
+    fclose(fp);
+    free(buffer);
+}
+
 void main_ui::gui_compute() {
     // 获取操作模式
     char head = 0, tail = 0, jail = 0;
@@ -151,6 +210,7 @@ void main_ui::gui_compute() {
         pending = true;
     } else if (!calculating) {
         ui->status_label->setText("Status: <font color = #FF2400 >Calculating...</font>");
+        ui->bottom_outputfile->setDisabled(true);
         calculating = true;
         pending = false;
         // 开启新的计算线程
@@ -171,6 +231,7 @@ void main_ui::computation_finish() {
         std::stringstream builder;
         builder << "Status: <font color = #4896FA >Ready</font> (in " << pending_cal->cal_time << "ms)";
         ui->status_label->setText(QString::fromStdString(builder.str()));
+        ui->bottom_outputfile->setDisabled(false);
         // 更新UI
         ui->text_output->setText(QString::fromStdString(pending_cal->ans));
     }
@@ -233,6 +294,8 @@ main_ui::main_ui(QWidget *parent) :
     connect(ui->box_tail, SIGNAL(textChanged()), this, SLOT(tail_limit()));
     connect(ui->box_jail, SIGNAL(textChanged()), this, SLOT(jail_limit()));
     connect(ui->bottom_compute, SIGNAL(pressed()), this, SLOT(gui_compute()));
+    connect(ui->bottom_inputfile, SIGNAL(pressed()), this, SLOT(gui_openfile()));
+    connect(ui->bottom_outputfile, SIGNAL(pressed()), this, SLOT(gui_savefile()));
 }
 
 main_ui::~main_ui() {
