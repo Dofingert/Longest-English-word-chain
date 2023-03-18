@@ -1,7 +1,7 @@
 std::string words_str[] = {"ab","ba","ac","cb","bc","ca","ad","dc","cd",
                            "da","ae","ed","de","ea","af","fg","gf","fa",
                            "ag","gh","hg","ga","ah","hi","ih","ha","ai",
-                           "ih","hi","ia"};
+                           "ia"};
 int std_cnt_ans = -1;
 int std_word_ans = 28;
 int std_char_ans = 28;
