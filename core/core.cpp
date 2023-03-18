@@ -273,12 +273,12 @@ struct ComputeUnit {
         global_state |= (((state_t) 1) << i);
     }
 
-    void dfs_state(thread_context_t *thread_context, int i) {
+    int dfs_state(thread_context_t *thread_context, int i) {
         // 记忆化搜索
         {
             auto const mem_stat = mp.find(make_pair(thread_context->global_state, i));
             if (mem_stat != mp.end()) {
-                return;
+                return mem_stat->second.first;
             }
         }
         int ret = (global_tail == -1 || i == global_tail) ? 0 : -INF;
@@ -288,9 +288,9 @@ struct ComputeUnit {
             // 先选自环
             modify_global_state(thread_context->global_state, edge_w[i][i][thread_context->w_used[i][i]].second);
             thread_context->w_used[i][i]++;
-            dfs_state(thread_context, i);
-            auto const mem_stat = mp.find(make_pair(thread_context->global_state, i));
-            ret = mem_stat->second.first +
+            int dfs_result = dfs_state(thread_context, i);
+//            auto const mem_stat = mp.find(make_pair(thread_context->global_state, i));
+            ret = dfs_result +
                   edge_w[i][i][thread_context->w_used[i][i] - 1ll].first;
             id = i;
             // 还原现场
@@ -309,10 +309,9 @@ struct ComputeUnit {
                         thread_context->global_state = 0;
                     }
                     thread_context->w_used[i][j]++;
-                    dfs_state(thread_context, j); // 由于 dfs_max结束后一定会把val还原成val_bk，因此dfs_max结束后val还是0
-                    auto const mem_stat = mp.find(make_pair(thread_context->global_state, j));
+                    int dfs_result = dfs_state(thread_context, j); // 由于 dfs_max结束后一定会把val还原成val_bk，因此dfs_max结束后val还是0
                     int sum =
-                            mem_stat->second.first +
+                            dfs_result +
                             edge_w[i][j][thread_context->w_used[i][j] - 1ll].first; // 为什么减去1ll？
                     if (ret < sum) {
                         ret = sum;
@@ -327,6 +326,7 @@ struct ComputeUnit {
 //        unique_lock<mutex> local_mp_lock(mp_lock);
         mp[make_pair(thread_context->global_state, i)] = {ret, id};
 //        local_mp_lock.unlock();
+        return ret;
     }
 
     int get_longest_chain(char *result[], char head, char tail, bool weighted, void *out_malloc(size_t)) {
