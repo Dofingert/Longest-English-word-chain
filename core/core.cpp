@@ -409,6 +409,9 @@ struct ComputeUnit {
 };
 
 int gen_chains_all(char *words[], int len, char *result[], void *out_malloc(size_t)) {
+    if (len > 10000) {
+        throw logic_error("Too many words, support up to 10000 words!");
+    }
     auto *context = new ComputeUnit;
     try {
         context->word_preprocessing(words, len, 0);
@@ -429,6 +432,9 @@ int gen_chain_word(char *words[], int len, char *result[], char head, char tail,
     try {
         int ret;
         if (!enable_loop) {
+            if (len > 10000) {
+                throw logic_error("Too many words, support up to 10000 words!");
+            }
             context->word_preprocessing(words, len, 0);
             context->get_SCC();
             context->check_loop();
@@ -442,6 +448,9 @@ int gen_chain_word(char *words[], int len, char *result[], char head, char tail,
                 ret = context->get_longest_chain_on_DAG(result, head, tail, false, out_malloc);
             }
         } else {
+            if (len > 128) {
+                throw logic_error("Too many words, support up to 128 words!");
+            }
             context->word_preprocessing(words, len, jail);
             context->get_SCC();
             ret = context->get_longest_chain(result, head, tail, false, out_malloc);
@@ -460,6 +469,9 @@ int gen_chain_char(char *words[], int len, char *result[], char head, char tail,
     try {
         int ret;
         if (!enable_loop) {
+            if (len > 10000) {
+                throw logic_error("Too many words, support up to 10000 words!");
+            }
             context->word_preprocessing(words, len, 0);
             context->get_SCC();
             context->check_loop();
@@ -473,6 +485,9 @@ int gen_chain_char(char *words[], int len, char *result[], char head, char tail,
                 ret = context->get_longest_chain_on_DAG(result, head, tail, true, out_malloc);
             }
         } else {
+            if (len > 128) {
+                throw logic_error("Too many words, support up to 128 words!");
+            }
             context->word_preprocessing(words, len, jail);
             context->get_SCC();
             ret = context->get_longest_chain(result, head, tail, true, out_malloc);
