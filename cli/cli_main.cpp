@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
         char head = 0, tail = 0, ban = 0;
         bool ring = false;
         int ret = 0;
-        long file_size;
+        size_t file_size;
         FILE *file = nullptr;
         char *input_buffer = nullptr;
         size_t word_num = 0;
@@ -149,8 +149,8 @@ int main(int argc, char *argv[]) {
             throw std::logic_error("Error: -n mode doesn't support -h/-t/-j/-r options!");
         }
         // 获取文件大小
-        fseek(file, 0, SEEK_END);
-        file_size = ftell(file);
+        _fseeki64(file, 0, SEEK_END);
+        file_size = _ftelli64(file);
 
         // 检查文件大小并分配空间
         if (file_size > MAX_FILE_SIZE) {
