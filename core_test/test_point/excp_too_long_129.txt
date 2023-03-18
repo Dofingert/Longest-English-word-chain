@@ -18,4 +18,4 @@ int std_char_ans = -1;
 char head = '\0';
 char tail = '\0';
 char jail = '\0';
-bool ring = false;
+bool ring = true;
