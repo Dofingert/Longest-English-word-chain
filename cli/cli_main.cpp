@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
                 } else {
                     file = fopen(argv[i], "rb");
                     if (file == nullptr) {
-                        throw std::logic_error("Error: Cannot find input file: \"" + std::string(argv[i]) + "\"!");
+                        throw std::logic_error("Error: Cannot open input file: \"" + std::string(argv[i]) + "\"!");
                     }
                 }
             }
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
             printf("%d\n", ret);
         } else if (cli_type == CLI_MAX_CHAR) {
             ret = gen_chain_char(c_word_list, word_num, result, head, tail, ban, ring, malloc);
-        } else if (cli_type == CLI_MAX_WORD) {
+        } else {
             ret = gen_chain_word(c_word_list, word_num, result, head, tail, ban, ring, malloc);
         }
         if (cli_type != CLI_COUNT_ALL) {
@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
         free(input_buffer);
         return 0;
     } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Core Error: "<< e.what() << std::endl;
         return -1;
     }
 }
