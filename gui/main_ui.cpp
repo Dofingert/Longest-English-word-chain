@@ -167,12 +167,9 @@ void main_ui::gui_savefile() {
 
     const QString result = ui->text_output->toPlainText();
 
-    char *buffer = (char *) (malloc(result.size() + 4096));
-    buffer[result.size()] = '\0';
-    fwrite(buffer, 1, result.size(), fp);
+    fwrite(result.toStdString().c_str(), 1, result.size(), fp);
 
     fclose(fp);
-    free(buffer);
 }
 
 void main_ui::gui_compute() {
@@ -229,7 +226,10 @@ void main_ui::computation_finish() {
     } else {
         calculating = false;
         std::stringstream builder;
-        builder << "Status: <font color = #4896FA >Ready</font> (in " << pending_cal->cal_time << "ms)";
+        double second = (double) pending_cal->cal_time / 1000;
+        char time_buffer[64];
+        snprintf(time_buffer, 64, "%.2lf", second);
+        builder << "Status: <font color = #4896FA >Ready</font> (in " << time_buffer << "s)";
         ui->status_label->setText(QString::fromStdString(builder.str()));
         ui->bottom_outputfile->setDisabled(false);
         // 更新UI
