@@ -25,10 +25,10 @@ GUI 程序位于仓库 `/guibin/gui.exe` ，直接运行即可启动 gui，与�
 .
 ├── CMakeLists.txt           // 项目主 Cmake 文件
 │
-├── core                     // 计算核心源码
+├── src/core                 // 计算核心源码
 │   └── ...
 │
-├── cli                      // 命令行交互程序源码
+├── src/cli                  // 命令行交互程序源码
 │   └── ...
 │
 ├── gui                      // 图形化交互 Qt 工程源码（不依赖父级目录）
@@ -37,10 +37,10 @@ GUI 程序位于仓库 `/guibin/gui.exe` ，直接运行即可启动 gui，与�
 ├── include                  // 工程文件头
 │   └── *.h
 │
-├── matching_test            // 对拍测试源码
+├── src/matching_test        // 对拍测试源码
 │   └── ...
 │
-├── publib                   // 公用库源码
+├── src/publib               // 公用库源码
 │   └── ...
 │
 ├── bin                      // 命令行二进制发行文件
@@ -54,7 +54,7 @@ GUI 程序位于仓库 `/guibin/gui.exe` ，直接运行即可启动 gui，与�
 │   ├── lib*.dll                 // Qt 依赖库
 │   └── core.dll                 // 计算核心库（同 bin 目录下的）
 │
-└── core_test                // 计算核心单元测试模块
+└── test                // 计算核心单元测试模块
     ├── ...                      // 单元测试源码
     └── test_point               // 单元测试 手工构造数据点
   
