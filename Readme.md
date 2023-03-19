@@ -32,13 +32,13 @@ content/our_test-their_core 使用我们的 单元测试 测试另一组的 dll
 .
 ├── CMakeLists.txt           // 项目主 Cmake 文件
 │
-├── core                     // 计算核心源码
+├── src/core                 // 计算核心源码
 │   └── ...
 │
 ├── combine                  // 交换 dll 文件
 │   └── ...
 │
-├── cli                      // 命令行交互程序源码
+├── src/cli                  // 命令行交互程序源码
 │   └── ...
 │
 ├── gui                      // 图形化交互 Qt 工程源码（不依赖父级目录）
@@ -47,10 +47,10 @@ content/our_test-their_core 使用我们的 单元测试 测试另一组的 dll
 ├── include                  // 工程文件头
 │   └── *.h
 │
-├── matching_test            // 对拍测试源码
+├── src/matching_test        // 对拍测试源码
 │   └── ...
 │
-├── publib                   // 公用库源码
+├── src/publib               // 公用库源码
 │   └── ...
 │
 ├── bin                      // 命令行二进制发行文件
